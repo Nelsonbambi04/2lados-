@@ -34,3 +34,4 @@ flask-debugtoolbar==0.13.1
 # Production (optional)
 gunicorn==21.2.0
 # psycopg2-binary==2.9.9 (for PostgreSQL)
+setuptools==79.0.1
