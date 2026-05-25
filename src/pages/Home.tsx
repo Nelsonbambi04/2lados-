@@ -17,7 +17,7 @@ export default function Home() {
           HERO SECTION
           Imagem de fundo + Título impactante + CTA
           ============================================ */}
-      <section className="relative min-h-[90vh] flex items-center">
+      <section className="relative flex min-h-[calc(100vh-4rem)] items-center py-16 sm:min-h-[calc(100vh-5rem)] lg:min-h-[90vh]">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -33,19 +33,19 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/20 backdrop-blur-sm rounded-full text-yellow-400 text-sm font-medium mb-6">
+            <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full bg-yellow-400/20 px-3 py-2 text-sm font-medium text-yellow-400 backdrop-blur-sm sm:mb-6 sm:px-4">
               <Building2 className="w-4 h-4" />
               Arquitectura & Construção em Angola
             </div>
 
             {/* Título Principal */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            <h1 className="mb-5 text-3xl font-bold leading-tight text-white sm:text-4xl md:mb-6 md:text-5xl lg:text-6xl">
               Do <span className="text-yellow-400">Traço</span> à <br />
               <span className="text-yellow-400">Obra</span>: Construímos o seu Futuro
             </h1>
 
             {/* Descrição */}
-            <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-xl">
+            <p className="mb-7 max-w-xl text-base text-slate-300 sm:text-lg md:mb-8 md:text-xl">
               Transformamos visões em realidade através de projetos arquitetônicos inovadores, 
               gestão rigorosa de obras e design de interiores excepcional.
             </p>
@@ -54,14 +54,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/contactos"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold rounded-xl transition-all hover:shadow-xl hover:shadow-yellow-400/30"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-yellow-400 px-5 py-3.5 font-bold text-slate-900 transition-all hover:bg-yellow-500 hover:shadow-xl hover:shadow-yellow-400/30 sm:px-8 sm:py-4"
               >
                 Solicitar Orçamento
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 to="/portfolio"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/20 transition-all"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 sm:px-8 sm:py-4"
               >
                 Ver Portfólio
               </Link>
@@ -70,7 +70,7 @@ export default function Home() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 animate-bounce sm:block">
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
             <div className="w-1.5 h-3 bg-white/50 rounded-full" />
           </div>
@@ -83,7 +83,7 @@ export default function Home() {
           ============================================ */}
       <section className="bg-white py-16 border-b border-slate-100">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 gap-5 sm:gap-8 md:grid-cols-4">
             {[
               { value: '150+', label: 'Projetos Concluídos' },
               { value: '5', label: 'Anos de Experiência' },
@@ -105,10 +105,10 @@ export default function Home() {
           SERVIÇOS SECTION
           Cards dos 4 serviços principais
           ============================================ */}
-      <section className="py-24 bg-slate-50">
+      <section className="bg-slate-50 py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4">
           {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-16">
             <span className="inline-block px-4 py-1.5 bg-yellow-400/10 text-yellow-600 text-sm font-semibold rounded-full mb-4">
               NOSSOS SERVIÇOS
             </span>
@@ -127,7 +127,7 @@ export default function Home() {
               <Link
                 key={service.id}
                 to="/servicos"
-                className="group bg-white rounded-2xl p-8 border border-slate-100 hover:border-yellow-400 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-400/10 hover:-translate-y-1"
+                className="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-yellow-400 hover:shadow-xl hover:shadow-yellow-400/10 sm:p-8"
               >
                 {/* Icon */}
                 <div className="w-14 h-14 bg-yellow-400/10 group-hover:bg-yellow-400 rounded-xl flex items-center justify-center mb-6 transition-colors">
@@ -162,10 +162,10 @@ export default function Home() {
           PROJETOS EM DESTAQUE
           Grid com 3 projetos recentes
           ============================================ */}
-      <section className="py-24 bg-white">
+      <section className="bg-white py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4">
           {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div className="mb-10 flex flex-col justify-between gap-5 sm:mb-16 md:flex-row md:items-end">
             <div>
               <span className="inline-block px-4 py-1.5 bg-yellow-400/10 text-yellow-600 text-sm font-semibold rounded-full mb-4">
                 PORTFÓLIO
@@ -206,7 +206,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent" />
 
                 {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                   {/* Category Badge */}
                   <span className="inline-block px-3 py-1 bg-yellow-400 text-slate-900 text-xs font-bold rounded-full mb-3">
                     {project.category.toUpperCase()}
@@ -218,7 +218,7 @@ export default function Home() {
                   </h3>
 
                   {/* Meta */}
-                  <div className="flex items-center gap-4 text-slate-300 text-sm">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-300">
                     <span className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
                       {project.location}
@@ -236,7 +236,7 @@ export default function Home() {
           CTA SECTION
           Chamada para ação final
           ============================================ */}
-      <section className="py-24 bg-slate-900 relative overflow-hidden">
+      <section className="relative overflow-hidden bg-slate-900 py-16 sm:py-20 lg:py-24">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
@@ -256,14 +256,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/contactos"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold rounded-xl transition-all hover:shadow-xl hover:shadow-yellow-400/30"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-yellow-400 px-5 py-3.5 font-bold text-slate-900 transition-all hover:bg-yellow-500 hover:shadow-xl hover:shadow-yellow-400/30 sm:px-8 sm:py-4"
               >
                 Agendar Consulta Gratuita
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <a
                 href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-all"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 font-semibold text-white transition-all hover:bg-white/20 sm:px-8 sm:py-4"
               >
                 <Phone className="w-5 h-5" />
                 {contactInfo.phone}
@@ -277,7 +277,7 @@ export default function Home() {
           WHY CHOOSE US
           Diferenciais da empresa
           ============================================ */}
-      <section className="py-24 bg-slate-50">
+      <section className="bg-slate-50 py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Image */}

@@ -74,13 +74,13 @@ export default function Publications() {
   return (
     <main className="min-h-screen bg-slate-50">
       <section className="bg-slate-950 text-white">
-        <div className="container mx-auto flex min-h-[360px] items-end px-4 py-12">
+        <div className="container mx-auto flex min-h-[300px] items-end px-4 py-10 sm:min-h-[360px] sm:py-12">
           <div className="max-w-3xl pb-4">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-950">
               <Newspaper className="h-4 w-4" />
               Noticias, atividades e eventos
             </span>
-            <h1 className="text-4xl font-bold leading-tight md:text-5xl">
+            <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
               Publicacoes da Dois Lados
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
@@ -93,12 +93,12 @@ export default function Publications() {
 
       <section className="border-b border-slate-200 bg-white py-5">
         <div className="container mx-auto flex flex-col gap-4 px-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-2">
+          <div className="-mx-4 flex w-[calc(100%+2rem)] gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:w-auto sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setFilter(category.id)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
                   filter === category.id
                     ? "bg-yellow-400 text-slate-950"
                     : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -151,7 +151,7 @@ function PublicationCard({ item, featured = false }: { item: Publication; featur
         featured ? "md:col-span-2 lg:col-span-3 lg:grid lg:grid-cols-[0.9fr_1.1fr]" : ""
       }`}
     >
-      <div className={featured ? "min-h-72" : "h-52"}>
+      <div className={featured ? "min-h-56 sm:min-h-72" : "h-52"}>
         {item.image_url ? (
           <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
         ) : (
@@ -171,7 +171,7 @@ function PublicationCard({ item, featured = false }: { item: Publication; featur
             </span>
           )}
         </div>
-        <h2 className={`${featured ? "text-3xl" : "text-xl"} font-bold text-slate-950`}>
+        <h2 className={`${featured ? "text-2xl sm:text-3xl" : "text-xl"} break-words font-bold text-slate-950`}>
           {item.title}
         </h2>
         {item.summary && <p className="mt-3 text-sm leading-6 text-slate-600">{item.summary}</p>}

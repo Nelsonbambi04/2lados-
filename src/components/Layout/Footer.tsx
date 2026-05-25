@@ -171,7 +171,7 @@ export default function Footer() {
               <h4 className="font-semibold text-white mb-1">Newsletter</h4>
               <p className="text-slate-400 text-sm">Receba novidades e projetos em destaque.</p>
             </div>
-            <form className="flex w-full md:w-auto gap-3" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex w-full flex-col gap-3 sm:flex-row md:w-auto" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="email"
                 placeholder="seu@email.com"
@@ -179,7 +179,7 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold rounded-xl transition-colors whitespace-nowrap"
+                className="rounded-xl bg-yellow-400 px-6 py-3 font-semibold text-slate-900 transition-colors hover:bg-yellow-500 sm:whitespace-nowrap"
               >
                 Subscrever
               </button>
@@ -192,8 +192,8 @@ export default function Footer() {
       <div className="border-t border-slate-800">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500">
-            <p>© {currentYear} Dois Lados - Arquitetura & Construção. Todos os direitos reservados.</p>
-            <div className="flex items-center gap-6">
+            <p className="text-center md:text-left">© {currentYear} Dois Lados - Arquitetura & Construção. Todos os direitos reservados.</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               <Link to="/politica-privacidade" className="hover:text-yellow-400 transition-colors">
                 Política de Privacidade
               </Link>

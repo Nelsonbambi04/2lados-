@@ -156,7 +156,7 @@ export default function Contacts() {
       {/* ============================================
           HERO SECTION
           ============================================ */}
-      <section className="relative py-24 bg-slate-900">
+      <section className="relative bg-slate-900 py-16 sm:py-20 lg:py-24">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -167,10 +167,10 @@ export default function Contacts() {
             <span className="inline-block px-4 py-1.5 bg-yellow-400/20 text-yellow-400 text-sm font-semibold rounded-full mb-4">
               CONTACTOS
             </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="mb-5 text-3xl font-bold text-white sm:text-4xl md:mb-6 md:text-5xl">
               Fale Connosco
             </h1>
-            <p className="text-xl text-slate-300">
+            <p className="text-base text-slate-300 sm:text-lg md:text-xl">
               Estamos prontos para ajudá-lo a transformar a sua visão em realidade. 
               Entre em contacto para uma consulta gratuita.
             </p>
@@ -181,14 +181,14 @@ export default function Contacts() {
       {/* ============================================
           CONTENT SECTION
           ============================================ */}
-      <section className="py-16 bg-slate-50">
+      <section className="bg-slate-50 py-10 sm:py-16">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
             {/* ============================================
                 COLUNA 1: FORMULÁRIO
                 ============================================ */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl shadow-sm p-8">
+              <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-8">
                 <h2 className="text-2xl font-bold text-slate-900 mb-6">
                   Envie a sua mensagem
                 </h2>
@@ -375,7 +375,7 @@ export default function Contacts() {
                     </div>
                     <div>
                       <p className="font-medium text-slate-900">Morada</p>
-                      <p className="text-sm text-slate-600 whitespace-pre-line">
+                      <p className="whitespace-pre-line text-sm text-slate-600">
                         {contactInfo.address}
                       </p>
                     </div>
@@ -390,7 +390,7 @@ export default function Contacts() {
                       <p className="font-medium text-slate-900">Telefone</p>
                       <a
                         href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
-                        className="text-sm text-slate-600 hover:text-yellow-600 transition-colors"
+                        className="break-all text-sm text-slate-600 transition-colors hover:text-yellow-600"
                       >
                         {contactInfo.phone}
                       </a>
@@ -451,7 +451,7 @@ export default function Contacts() {
                 </p>
                 <a
                   href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
-                  className="flex items-center gap-2 text-slate-900 font-bold hover:text-slate-700 transition-colors"
+                  className="flex items-center gap-2 break-all font-bold text-slate-900 transition-colors hover:text-slate-700"
                 >
                   <Phone className="w-5 h-5" />
                   {contactInfo.phone}

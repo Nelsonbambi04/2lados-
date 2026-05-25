@@ -88,16 +88,16 @@ export default function ClientDashboard() {
     <main className="min-h-screen bg-slate-50">
       <section className="border-b border-slate-100 bg-white">
         <div className="container mx-auto flex flex-col gap-4 px-4 py-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400">
               <User className="h-6 w-6 text-slate-900" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">Bem-vindo, {data.user.username}!</h1>
+            <div className="min-w-0">
+              <h1 className="break-words text-lg font-bold text-slate-900 sm:text-xl">Bem-vindo, {data.user.username}!</h1>
               <p className="text-sm text-slate-500">Acompanhe os seus projetos e fale com a equipa.</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
             <button className="relative rounded-lg p-2 hover:bg-slate-100">
               <Bell className="h-5 w-5 text-slate-600" />
               {unread > 0 && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-yellow-400" />}
@@ -124,7 +124,7 @@ export default function ClientDashboard() {
               {projects.map((project) => (
                 <article key={project.id} className="rounded-xl border border-slate-100 p-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
+                    <div className="min-w-0">
                       <h3 className="font-bold text-slate-900">{project.title}</h3>
                       <p className="text-sm text-slate-500">{project.location || project.category || "Sem localizacao"}</p>
                     </div>
@@ -134,8 +134,8 @@ export default function ClientDashboard() {
                   {project.phases?.length > 0 && (
                     <ol className="mt-4 space-y-2 text-sm">
                       {project.phases.map((phase: any) => (
-                        <li key={phase.id} className="flex justify-between rounded-lg bg-slate-50 px-3 py-2">
-                          <span>{phase.phase_order}. {phase.phase_name}</span>
+                        <li key={phase.id} className="flex flex-col gap-1 rounded-lg bg-slate-50 px-3 py-2 sm:flex-row sm:justify-between">
+                          <span className="break-words">{phase.phase_order}. {phase.phase_name}</span>
                           <span className="text-slate-500">{phase.status}</span>
                         </li>
                       ))}
@@ -168,9 +168,9 @@ export default function ClientDashboard() {
             <div className="mt-4 space-y-3">
               {data.messages.map((message) => (
                 <div key={message.id} className="rounded-xl border border-slate-100 p-3">
-                  <div className="flex justify-between gap-3 text-sm">
-                    <span className="font-semibold text-slate-900">{message.subject || "Mensagem"}</span>
-                    <span className="text-slate-400">{new Date(message.created_at).toLocaleDateString()}</span>
+                  <div className="flex flex-col gap-1 text-sm sm:flex-row sm:justify-between sm:gap-3">
+                    <span className="break-words font-semibold text-slate-900">{message.subject || "Mensagem"}</span>
+                    <span className="shrink-0 text-slate-400">{new Date(message.created_at).toLocaleDateString()}</span>
                   </div>
                   <p className="mt-2 text-sm text-slate-600">{message.content}</p>
                   {message.attachment_url && (

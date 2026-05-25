@@ -13,7 +13,7 @@ export default function Services() {
       {/* ============================================
           HERO SECTION
           ============================================ */}
-      <section className="relative py-24 bg-slate-900">
+      <section className="relative bg-slate-900 py-16 sm:py-20 lg:py-24">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -24,10 +24,10 @@ export default function Services() {
             <span className="inline-block px-4 py-1.5 bg-yellow-400/20 text-yellow-400 text-sm font-semibold rounded-full mb-4">
               NOSSOS SERVIÇOS
             </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="mb-5 text-3xl font-bold text-white sm:text-4xl md:mb-6 md:text-5xl">
               Soluções Completas em Arquitectura e Construção
             </h1>
-            <p className="text-xl text-slate-300">
+            <p className="text-base text-slate-300 sm:text-lg md:text-xl">
               Oferecemos serviços especializados para todas as fases do seu projeto, 
               desde a conceção até à entrega final.
             </p>
@@ -38,9 +38,9 @@ export default function Services() {
       {/* ============================================
           SERVIÇOS DETALHADOS
           ============================================ */}
-      <section className="py-24 bg-slate-50">
+      <section className="bg-slate-50 py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4">
-          <div className="space-y-24">
+          <div className="space-y-16 sm:space-y-20 lg:space-y-24">
             {services.map((service, index) => {
               const IconComponent = 
                 service.icon === 'Building2' ? Building2 :
@@ -81,11 +81,11 @@ export default function Services() {
                     </p>
 
                     {/* Features List */}
-                    <div className="bg-white rounded-2xl p-6 border border-slate-100">
+                    <div className="rounded-2xl border border-slate-100 bg-white p-5 sm:p-6">
                       <h4 className="font-semibold text-slate-900 mb-4">
                         O que inclui:
                       </h4>
-                      <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="grid gap-3 sm:grid-cols-2">
                         {service.features.map((feature, idx) => (
                           <div key={idx} className="flex items-start gap-3">
                             <div className="w-5 h-5 bg-yellow-400/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -132,7 +132,7 @@ export default function Services() {
                         className="w-full h-80 lg:h-96 object-cover rounded-2xl shadow-2xl"
                       />
                       {/* Decorative Element */}
-                      <div className={`absolute -z-10 w-full h-full bg-yellow-400/20 rounded-2xl ${
+                      <div className={`absolute -z-10 hidden h-full w-full rounded-2xl bg-yellow-400/20 sm:block ${
                         isEven ? '-bottom-4 -right-4' : '-top-4 -left-4'
                       }`} />
                     </div>
@@ -147,9 +147,9 @@ export default function Services() {
       {/* ============================================
           CTA SECTION
           ============================================ */}
-      <section className="py-24 bg-white">
+      <section className="bg-white py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-3xl p-8 md:p-12">
+          <div className="rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 sm:p-8 md:rounded-3xl md:p-12">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                 Pronto para iniciar o seu projeto?
@@ -161,14 +161,14 @@ export default function Services() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/contactos"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3.5 font-bold text-white transition-all hover:bg-slate-800 sm:px-8 sm:py-4"
                 >
                   <Phone className="w-5 h-5" />
                   Solicitar Orçamento
                 </Link>
                 <a
                   href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/20 hover:bg-white/30 text-slate-900 font-semibold rounded-xl transition-all"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/20 px-5 py-3.5 font-semibold text-slate-900 transition-all hover:bg-white/30 sm:px-8 sm:py-4"
                 >
                   <Phone className="w-5 h-5" />
                   {contactInfo.phone}
@@ -182,7 +182,7 @@ export default function Services() {
       {/* ============================================
           FAQ SECTION (Simplificado)
           ============================================ */}
-      <section className="py-24 bg-slate-50">
+      <section className="bg-slate-50 py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
@@ -217,7 +217,7 @@ export default function Services() {
                   key={index}
                   className="bg-white rounded-xl border border-slate-100 overflow-hidden group"
                 >
-                  <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-50 transition-colors">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 p-4 transition-colors hover:bg-slate-50 sm:p-6">
                     <span className="font-semibold text-slate-900">{faq.question}</span>
                     <span className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0 group-open:rotate-180 transition-transform">
                       <ArrowRight className="w-4 h-4 text-slate-900 rotate-90" />

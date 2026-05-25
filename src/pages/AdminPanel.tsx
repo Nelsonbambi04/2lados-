@@ -216,12 +216,12 @@ export default function AdminPanel() {
         <section className="bg-white border-b border-slate-100">
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-4">
+              <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400">
                   <Users className="h-6 w-6 text-slate-900" />
                 </div>
-                <div>
-                  <h1 className="text-xl font-bold text-slate-900">
+                <div className="min-w-0">
+                  <h1 className="break-words text-lg font-bold text-slate-900 sm:text-xl">
                     Bem-vindo, {user?.username || "admin"}!
                   </h1>
                   <p className="text-sm text-slate-500">
@@ -229,7 +229,7 @@ export default function AdminPanel() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
                 <button className="relative rounded-lg p-2 hover:bg-slate-100">
                   <Bell className="h-5 w-5 text-slate-600" />
                   {stats.unreadMessages > 0 && (
@@ -277,7 +277,7 @@ export default function AdminPanel() {
 
               <div className="space-y-6 lg:col-span-3">
                 {alert && (
-                  <div className="rounded-xl border border-yellow-300 bg-yellow-100 p-4 text-slate-900">
+                  <div className="break-words rounded-xl border border-yellow-300 bg-yellow-100 p-4 text-slate-900">
                     {alert}
                   </div>
                 )}
@@ -325,19 +325,19 @@ export default function AdminPanel() {
                 {activeTab === "messages" && (
                   <Panel title="Comunicacao" subtitle="Chat interno com clientes, documentos e imagens anexadas.">
                     <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-                      <div className="space-y-2">
+                      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:mx-0 lg:block lg:space-y-2 lg:overflow-visible lg:px-0 lg:pb-0">
                         {clientUsers.map((client) => {
                           const unread = messages.filter((message) => message.user_id === client.id && !message.is_read && message.sender_role !== "admin").length;
                           return (
                             <button
                               key={client.id}
                               onClick={() => setSelectedClientId(client.id)}
-                              className={`w-full rounded-xl px-3 py-3 text-left text-sm ${
+                              className={`w-56 shrink-0 rounded-xl px-3 py-3 text-left text-sm lg:w-full ${
                                 currentClientId === client.id ? "bg-yellow-400 text-slate-900" : "bg-slate-50 text-slate-700 hover:bg-slate-100"
                               }`}
                             >
-                              <span className="block font-semibold">{client.username}</span>
-                              <span className="text-xs opacity-80">{client.email}</span>
+                              <span className="block truncate font-semibold">{client.username}</span>
+                              <span className="block truncate text-xs opacity-80">{client.email}</span>
                               {unread > 0 && <span className="mt-2 inline-block rounded-full bg-slate-900 px-2 py-0.5 text-xs text-white">{unread}</span>}
                             </button>
                           );
@@ -353,15 +353,15 @@ export default function AdminPanel() {
                         <div className="max-h-[420px] space-y-3 overflow-y-auto pr-2">
                           {threadMessages.map((item) => (
                             <div key={item.id} className={`flex ${item.sender_role === "admin" ? "justify-end" : "justify-start"}`}>
-                              <div className={`max-w-[78%] rounded-2xl p-4 shadow-sm ${
+                              <div className={`max-w-[92%] overflow-hidden rounded-2xl p-4 shadow-sm sm:max-w-[78%] ${
                                 item.sender_role === "admin" ? "bg-slate-900 text-white" : item.is_read ? "bg-white text-slate-800" : "bg-yellow-50 text-slate-900"
                               }`}>
-                                <div className="mb-1 flex items-center justify-between gap-4 text-xs opacity-80">
-                                  <span>{item.sender_role === "admin" ? "Admin" : item.name}</span>
-                                  <span>{new Date(item.created_at).toLocaleString()}</span>
+                                <div className="mb-1 flex flex-col gap-1 text-xs opacity-80 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                                  <span className="truncate">{item.sender_role === "admin" ? "Admin" : item.name}</span>
+                                  <span className="shrink-0">{new Date(item.created_at).toLocaleString()}</span>
                                 </div>
-                                {item.subject && <p className="font-semibold">{item.subject}</p>}
-                                <p className="mt-2 text-sm leading-6">{item.content}</p>
+                                {item.subject && <p className="break-words font-semibold">{item.subject}</p>}
+                                <p className="mt-2 break-words text-sm leading-6">{item.content}</p>
                                 {item.attachment_url && (
                                   <a className="mt-3 inline-block rounded-lg bg-white/20 px-3 py-2 text-sm underline" href={item.attachment_url} target="_blank" rel="noreferrer">
                                     {item.attachment_name || "Abrir anexo"}
@@ -381,8 +381,8 @@ export default function AdminPanel() {
                         <form onSubmit={handleAdminReply} className="mt-4 grid gap-3">
                           <input className="rounded-xl border border-slate-200 bg-white px-4 py-3" placeholder="Assunto" value={replySubject} onChange={(e) => setReplySubject(e.target.value)} />
                           <textarea className="min-h-28 rounded-xl border border-slate-200 bg-white px-4 py-3" placeholder="Escreva a mensagem para o cliente" value={replyContent} onChange={(e) => setReplyContent(e.target.value)} required />
-                          <div className="flex flex-wrap items-center gap-3">
-                            <input type="file" onChange={(e) => setReplyFile(e.target.files?.[0] || null)} />
+                          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                            <input className="w-full text-sm sm:w-auto" type="file" onChange={(e) => setReplyFile(e.target.files?.[0] || null)} />
                             <button className="rounded-xl bg-yellow-400 px-5 py-3 font-bold text-slate-900" disabled={busy || !currentClientId}>
                               Enviar mensagem
                             </button>
@@ -493,7 +493,7 @@ export default function AdminPanel() {
 
 function Panel({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm">
+    <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-6">
       <div className="mb-5">
         <h2 className="text-xl font-bold text-slate-900">{title}</h2>
         <p className="text-sm text-slate-500">{subtitle}</p>
@@ -505,8 +505,8 @@ function Panel({ title, subtitle, children }: { title: string; subtitle: string;
 
 function DataTable({ headers, children }: { headers: string[]; children: ReactNode }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-100">
-      <table className="min-w-full bg-white text-sm">
+    <div className="-mx-4 overflow-x-auto border-y border-slate-100 sm:mx-0 sm:rounded-xl sm:border">
+      <table className="min-w-[720px] bg-white text-sm">
         <thead className="bg-slate-50 text-slate-600">
           <tr>{headers.map((item) => <th key={item} className="p-3 text-left font-semibold">{item}</th>)}</tr>
         </thead>
