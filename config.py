@@ -23,10 +23,16 @@ class Config:
     SESSION_TYPE = 'filesystem'
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'None'
     PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
     
     # Flask-Login
     REMEMBER_COOKIE_DURATION = timedelta(days=7)
+    REMEMBER_COOKIE_SECURE = True
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SAMESITE = 'None'
     
     # Upload de ficheiros
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
@@ -42,6 +48,10 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = False  # True para ver SQL no terminal
     SQLALCHEMY_ENGINE_OPTIONS = {}
+    SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    REMEMBER_COOKIE_SECURE = False
+    REMEMBER_COOKIE_SAMESITE = 'Lax'
 
 
 class ProductionConfig(Config):
@@ -85,6 +95,7 @@ class MailConfig:
     
     # Admin destinatário
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or 'nelsonbambi177@gmail.com'
+    APPLICATION_EMAIL = os.environ.get('APPLICATION_EMAIL') or 'doislados08@gmail.com'
 
 
 # Combinar configurações

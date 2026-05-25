@@ -58,7 +58,7 @@ export interface AdminUser {
   projects_count: number;
 }
 
-export type PublicationCategory = 'noticia' | 'atividade' | 'evento' | 'publicidade' | 'obra';
+export type PublicationCategory = 'noticia' | 'atividade' | 'evento' | 'publicidade' | 'obra' | 'recrutamento';
 
 export interface Publication {
   id: number;
@@ -202,6 +202,29 @@ export const updatePublication = (id: number, payload: Partial<Publication>) =>
 
 export const deletePublication = (id: number) =>
   request<{ message: string }>(`/admin/publications/${id}`, { method: 'DELETE' });
+
+export const submitJobApplication = (payload: {
+  publication_id: number;
+  publication_title: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  cv: File;
+}) => {
+  const fd = new FormData();
+  fd.append('publication_id', String(payload.publication_id));
+  fd.append('publication_title', payload.publication_title);
+  fd.append('name', payload.name);
+  fd.append('email', payload.email);
+  fd.append('phone', payload.phone);
+  fd.append('message', payload.message);
+  fd.append('cv', payload.cv);
+  return request<{ message: string }>('/applications', {
+    method: 'POST',
+    body: fd,
+  });
+};
 
 // Mensagens admin (marcar lida/arquivar)
 export const markMessageRead = (id: number, is_read = true) =>

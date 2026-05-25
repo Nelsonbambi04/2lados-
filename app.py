@@ -18,7 +18,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from config import config
+from config import MailConfig, config
 from models import db, User, PortfolioItem, Project, ProjectPhase, Message as ContactMessage, create_admin_user, init_sample_data
 from sqlalchemy import text
 
@@ -47,7 +47,9 @@ def create_app(config_name=None):
     """
     
     if config_name is None:
-        config_name = os.environ.get('FLASK_ENV', 'development')
+        config_name = os.environ.get('FLASK_ENV') or os.environ.get('FLASK_CONFIG')
+        if config_name is None:
+            config_name = 'production' if os.environ.get('RENDER') else 'development'
     
     app = Flask(
         __name__,
@@ -62,6 +64,7 @@ def create_app(config_name=None):
     
     # Carregar configuração
     app.config.from_object(config.get(config_name, config['default']))
+    app.config.from_object(MailConfig)
     
     # ============================================
     # INICIALIZAÇÃO DE EXTENSIONS

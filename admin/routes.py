@@ -68,8 +68,9 @@ import uuid
 # Criar blueprint
 api = Blueprint('api', __name__, url_prefix='/api')
 
-PUBLICATION_CATEGORIES = {'noticia', 'atividade', 'evento', 'publicidade', 'obra'}
+PUBLICATION_CATEGORIES = {'noticia', 'atividade', 'evento', 'publicidade', 'obra', 'recrutamento'}
 MESSAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'dwg', 'txt'}
+APPLICATION_UPLOAD_EXTENSIONS = {'pdf', 'doc', 'docx'}
 
 
 def save_message_attachment(file_storage):
@@ -87,6 +88,24 @@ def save_message_attachment(file_storage):
     file_storage.save(os.path.join(upload_dir, stored_name))
 
     return f"/static/uploads/messages/{stored_name}", filename, file_storage.mimetype
+
+
+def save_application_cv(file_storage):
+    if not file_storage or not file_storage.filename:
+        raise ValueError('O curriculo/CV e obrigatorio')
+
+    filename = secure_filename(file_storage.filename)
+    extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+    if extension not in APPLICATION_UPLOAD_EXTENSIONS:
+        raise ValueError('Envie o CV em PDF, DOC ou DOCX')
+
+    upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'applications')
+    os.makedirs(upload_dir, exist_ok=True)
+    stored_name = f"{uuid.uuid4().hex}_{filename}"
+    path = os.path.join(upload_dir, stored_name)
+    file_storage.save(path)
+
+    return path, filename, file_storage.mimetype or 'application/octet-stream'
 
 
 def serialize_message(item):
@@ -1936,6 +1955,95 @@ def get_projects_public():
         return jsonify({
             'success': False,
             'error': 'Erro ao carregar projetos'
+        }), 500
+
+
+@api.route('/applications', methods=['POST'])
+def submit_job_application():
+    """Receber candidatura de recrutamento e enviar email com CV anexado."""
+    try:
+        name = (request.form.get('name') or '').strip()
+        email = (request.form.get('email') or '').strip().lower()
+        phone = (request.form.get('phone') or '').strip()
+        message_text = (request.form.get('message') or '').strip()
+        publication_title = (request.form.get('publication_title') or 'Vaga de Recrutamento').strip()
+        publication_id = request.form.get('publication_id')
+
+        required_fields = {
+            'Nome Completo': name,
+            'E-mail de Contacto': email,
+            'Telefone': phone,
+            'Mensagem': message_text,
+        }
+        missing = [label for label, value in required_fields.items() if not value]
+        if missing:
+            return jsonify({
+                'success': False,
+                'error': f"Campos obrigatorios em falta: {', '.join(missing)}"
+            }), 400
+
+        cv_path, cv_name, cv_mimetype = save_application_cv(request.files.get('cv'))
+
+        mail = current_app.extensions.get('mail')
+        if not mail:
+            return jsonify({
+                'success': False,
+                'error': 'Servico de email indisponivel'
+            }), 503
+
+        subject = f'[Nova Candidatura] - {publication_title} - {name}'
+        recipient = current_app.config.get('APPLICATION_EMAIL', 'doislados08@gmail.com')
+        msg = Message(subject=subject, recipients=[recipient])
+        msg.body = f"""
+Nova candidatura recebida pelo site Dois Lados.
+
+Vaga: {publication_title}
+ID da publicacao: {publication_id or 'N/A'}
+
+Nome: {name}
+Email: {email}
+Telefone: {phone}
+
+Mensagem:
+{message_text}
+        """.strip()
+        msg.html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto;">
+          <div style="background: #FACC15; padding: 18px 22px;">
+            <h1 style="margin: 0; color: #111827;">Nova candidatura</h1>
+            <p style="margin: 6px 0 0; color: #374151;">Dois Lados - Recrutamento</p>
+          </div>
+          <div style="background: #F9FAFB; padding: 24px;">
+            <h2 style="margin-top: 0; color: #111827;">{publication_title}</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr><td style="padding: 9px; color: #6B7280;">Nome</td><td style="padding: 9px; font-weight: bold;">{name}</td></tr>
+              <tr><td style="padding: 9px; color: #6B7280;">Email</td><td style="padding: 9px;"><a href="mailto:{email}">{email}</a></td></tr>
+              <tr><td style="padding: 9px; color: #6B7280;">Telefone</td><td style="padding: 9px;">{phone}</td></tr>
+              <tr><td style="padding: 9px; color: #6B7280;">Publicacao</td><td style="padding: 9px;">{publication_id or 'N/A'}</td></tr>
+            </table>
+            <h3 style="color: #111827;">Mensagem / Apresentacao</h3>
+            <p style="white-space: pre-wrap; background: white; border-left: 4px solid #FACC15; padding: 14px;">{message_text}</p>
+            <p style="color: #6B7280;">CV anexado: {cv_name}</p>
+          </div>
+        </div>
+        """
+
+        with open(cv_path, 'rb') as cv_file:
+            msg.attach(cv_name, cv_mimetype, cv_file.read())
+        mail.send(msg)
+
+        return jsonify({
+            'success': True,
+            'message': 'Candidatura enviada com sucesso. Obrigado pelo seu interesse!'
+        }), 201
+    except ValueError as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
+    except Exception as e:
+        current_app.logger.error(f'Erro ao enviar candidatura: {str(e)}')
+        current_app.logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': 'Nao foi possivel enviar a candidatura. Tente novamente mais tarde.'
         }), 500
 
 

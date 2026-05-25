@@ -431,6 +431,7 @@ export default function AdminPanel() {
                         <option value="evento">Evento</option>
                         <option value="publicidade">Publicidade</option>
                         <option value="obra">Obra</option>
+                        <option value="recrutamento">Recrutamento</option>
                       </select>
                       <textarea className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 md:col-span-2" placeholder="Conteudo" value={publicationForm.content || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, content: e.target.value }))} required />
                       <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="URL da imagem" value={publicationForm.image_url || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, image_url: e.target.value }))} />
