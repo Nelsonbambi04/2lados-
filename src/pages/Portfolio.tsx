@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, MapPin, Calendar, ExternalLink } from "lucide-react";
-import { getPublicPortfolio, PortfolioItem } from "../services/api";
+import { getPublicPortfolio, PortfolioItem, resolveAssetUrl } from "../services/api";
 
 type Category = "todos" | "residencial" | "comercial" | "urbanismo";
 
@@ -112,7 +112,7 @@ export default function Portfolio() {
                 >
                   <div className="relative">
                     <img
-                      src={project.image_url || "/placeholder.jpg"}
+                      src={resolveAssetUrl(project.image_url, "/placeholder.jpg")}
                       alt={project.title}
                       className="w-full h-56 object-cover"
                     />

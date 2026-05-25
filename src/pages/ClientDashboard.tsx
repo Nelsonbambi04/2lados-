@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell, Building2, FileText, LogOut, Mail, Send, User } from "lucide-react";
-import { ClientProfile, getClientProfile, request, sendClientMessage } from "../services/api";
+import { ClientProfile, getClientProfile, request, resolveAssetUrl, sendClientMessage } from "../services/api";
 
 export default function ClientDashboard() {
   const [data, setData] = useState<ClientProfile | null>(null);
@@ -174,7 +174,7 @@ export default function ClientDashboard() {
                   </div>
                   <p className="mt-2 text-sm text-slate-600">{message.content}</p>
                   {message.attachment_url && (
-                    <a className="mt-2 inline-block text-sm text-yellow-700 underline" href={message.attachment_url} target="_blank" rel="noreferrer">
+                    <a className="mt-2 inline-block text-sm text-yellow-700 underline" href={resolveAssetUrl(message.attachment_url)} target="_blank" rel="noreferrer">
                       {message.attachment_name || "Abrir anexo"}
                     </a>
                   )}

@@ -103,6 +103,13 @@ export interface ClientProfile {
 }
 
 export const API_BASE = (import.meta.env.VITE_API_URL ?? 'https://twolados.onrender.com/api').replace(/\/+$/, '');
+export const ASSET_BASE = API_BASE.replace(/\/api$/, '');
+
+export function resolveAssetUrl(url?: string | null, fallback = '') {
+  if (!url) return fallback;
+  if (/^(https?:)?\/\//i.test(url) || url.startsWith('data:')) return url;
+  return `${ASSET_BASE}${url.startsWith('/') ? url : `/${url}`}`;
+}
 
 export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const apiPath = path.startsWith('/') ? path : `/${path}`;

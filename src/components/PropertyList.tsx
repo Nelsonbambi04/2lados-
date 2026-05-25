@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getProperties, Property } from '../services/api';
+import { getProperties, Property, resolveAssetUrl } from '../services/api';
 
 // Lista de imóveis consumindo o backend Flask
 export default function PropertyList() {
@@ -39,7 +39,7 @@ export default function PropertyList() {
           className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
         >
           <img
-            src={property.image || property.image_url || 'https://via.placeholder.com/600x400?text=Im%C3%B3vel'}
+            src={resolveAssetUrl(property.image || property.image_url, 'https://via.placeholder.com/600x400?text=Im%C3%B3vel')}
             alt={property.title}
             className="w-full h-48 object-cover"
             loading="lazy"

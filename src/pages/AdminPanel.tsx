@@ -31,6 +31,7 @@ import {
   getAdminQuotes,
   getAdminUsers,
   markMessageRead,
+  resolveAssetUrl,
   sendAdminMessage,
   updateAdminUser,
   updatePortfolio,
@@ -363,7 +364,7 @@ export default function AdminPanel() {
                                 {item.subject && <p className="break-words font-semibold">{item.subject}</p>}
                                 <p className="mt-2 break-words text-sm leading-6">{item.content}</p>
                                 {item.attachment_url && (
-                                  <a className="mt-3 inline-block rounded-lg bg-white/20 px-3 py-2 text-sm underline" href={item.attachment_url} target="_blank" rel="noreferrer">
+                                  <a className="mt-3 inline-block rounded-lg bg-white/20 px-3 py-2 text-sm underline" href={resolveAssetUrl(item.attachment_url)} target="_blank" rel="noreferrer">
                                     {item.attachment_name || "Abrir anexo"}
                                   </a>
                                 )}
