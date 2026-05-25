@@ -210,6 +210,15 @@ export const updatePublication = (id: number, payload: Partial<Publication>) =>
 export const deletePublication = (id: number) =>
   request<{ message: string }>(`/admin/publications/${id}`, { method: 'DELETE' });
 
+export const uploadPublicationImage = (id: number, file: File) => {
+  const fd = new FormData();
+  fd.append('image', file);
+  return request<{ message: string; image_url: string }>(`/admin/publications/${id}/image`, {
+    method: 'POST',
+    body: fd,
+  });
+};
+
 export const submitJobApplication = (payload: {
   publication_id: number;
   publication_title: string;

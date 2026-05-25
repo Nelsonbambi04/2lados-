@@ -71,6 +71,7 @@ api = Blueprint('api', __name__, url_prefix='/api')
 PUBLICATION_CATEGORIES = {'noticia', 'atividade', 'evento', 'publicidade', 'obra', 'recrutamento'}
 MESSAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'dwg', 'txt'}
 APPLICATION_UPLOAD_EXTENSIONS = {'pdf', 'doc', 'docx'}
+IMAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 
 def save_message_attachment(file_storage):
@@ -106,6 +107,23 @@ def save_application_cv(file_storage):
     file_storage.save(path)
 
     return path, filename, file_storage.mimetype or 'application/octet-stream'
+
+
+def save_publication_image(file_storage):
+    if not file_storage or not file_storage.filename:
+        raise ValueError('Imagem obrigatoria')
+
+    filename = secure_filename(file_storage.filename)
+    extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+    if extension not in IMAGE_UPLOAD_EXTENSIONS:
+        raise ValueError('Tipo de imagem nao permitido')
+
+    upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'publications')
+    os.makedirs(upload_dir, exist_ok=True)
+    stored_name = f"{uuid.uuid4().hex}_{filename}"
+    file_storage.save(os.path.join(upload_dir, stored_name))
+
+    return f"/static/uploads/publications/{stored_name}"
 
 
 def serialize_message(item):
@@ -1658,6 +1676,31 @@ def update_publication(publication_id):
         return jsonify({
             'success': False,
             'error': 'Erro ao atualizar publicacao'
+        }), 500
+
+
+@api.route('/admin/publications/<int:publication_id>/image', methods=['POST'])
+@admin_required
+def upload_publication_image(publication_id):
+    """Upload de imagem da publicacao a partir do dispositivo."""
+    try:
+        item = Publication.query.get_or_404(publication_id)
+        item.image_url = save_publication_image(request.files.get('image'))
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Imagem da publicacao enviada com sucesso!',
+            'image_url': item.image_url
+        }), 200
+    except ValueError as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Erro ao enviar imagem da publicacao: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao enviar imagem da publicacao'
         }), 500
 
 

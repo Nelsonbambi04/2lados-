@@ -38,6 +38,7 @@ import {
   updatePublication,
   updateQuoteStatus,
   uploadPortfolioImage,
+  uploadPublicationImage,
 } from "../services/api";
 import { AdminDashboardGuard } from "../components/AdminDashboardGuard";
 import useUser from "../hooks/useUser";
@@ -64,6 +65,7 @@ export default function AdminPanel() {
   const [alert, setAlert] = useState("");
   const [busy, setBusy] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [publicationFile, setPublicationFile] = useState<File | null>(null);
   const [quoteFilter, setQuoteFilter] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<number | "">("");
   const [replySubject, setReplySubject] = useState("");
@@ -170,9 +172,15 @@ export default function AdminPanel() {
         is_active: publicationForm.is_active ?? true,
         is_featured: publicationForm.is_featured ?? false,
       };
-      if (publicationForm.id) await updatePublication(publicationForm.id, payload);
-      else await createPublication(payload);
+      let publicationId = publicationForm.id;
+      if (publicationId) {
+        await updatePublication(publicationId, payload);
+      } else {
+        publicationId = (await createPublication(payload)).publication.id;
+      }
+      if (publicationId && publicationFile) await uploadPublicationImage(publicationId, publicationFile);
       setPublicationForm({ category: "noticia", is_active: true });
+      setPublicationFile(null);
       setAlert("Publicacao salva.");
       refreshAll();
     } catch (err: any) {
@@ -215,7 +223,7 @@ export default function AdminPanel() {
     <AdminDashboardGuard user={user}>
       <main className="min-h-screen bg-slate-50">
         <section className="bg-white border-b border-slate-100">
-          <div className="container mx-auto px-4 py-6">
+          <div className="mx-auto w-full max-w-[1500px] px-4 py-5 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400">
@@ -252,31 +260,31 @@ export default function AdminPanel() {
           </div>
         </section>
 
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="grid gap-8 lg:grid-cols-4">
-              <aside className="lg:col-span-1">
-                <div className="sticky top-24 rounded-2xl bg-white p-4 shadow-sm">
-                  <nav className="space-y-1">
+        <section className="py-5 sm:py-8">
+          <div className="mx-auto w-full max-w-[1500px] px-4 sm:px-6 lg:px-8">
+            <div className="grid min-w-0 gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
+              <aside className="min-w-0">
+                <div className="rounded-2xl bg-white p-3 shadow-sm xl:sticky xl:top-24 xl:p-4">
+                  <nav className="flex gap-2 overflow-x-auto pb-1 xl:block xl:space-y-1 xl:overflow-visible xl:pb-0">
                     {tabs.map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-medium transition ${
+                        className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-3 text-left text-sm font-medium transition xl:w-full xl:gap-3 xl:px-4 xl:text-base ${
                           activeTab === tab.id
                             ? "bg-yellow-400 text-slate-900"
                             : "text-slate-600 hover:bg-slate-100"
                         }`}
                       >
-                        <tab.icon className="h-5 w-5" />
-                        {tab.label}
+                        <tab.icon className="h-5 w-5 shrink-0" />
+                        <span className="whitespace-nowrap">{tab.label}</span>
                       </button>
                     ))}
                   </nav>
                 </div>
               </aside>
 
-              <div className="space-y-6 lg:col-span-3">
+              <div className="min-w-0 space-y-6">
                 {alert && (
                   <div className="break-words rounded-xl border border-yellow-300 bg-yellow-100 p-4 text-slate-900">
                     {alert}
@@ -284,7 +292,7 @@ export default function AdminPanel() {
                 )}
 
                 {activeTab === "overview" && (
-                  <div className="grid gap-4 md:grid-cols-4">
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard icon={Users} value={stats.activeClients} label="Clientes Ativos" color="yellow" />
                     <StatCard icon={Mail} value={stats.unreadMessages} label="Mensagens Novas" color="blue" />
                     <StatCard icon={FolderOpen} value={stats.projects} label="Projetos" color="green" />
@@ -424,9 +432,9 @@ export default function AdminPanel() {
 
                 {activeTab === "publications" && (
                   <Panel title="Publicacoes" subtitle="Noticias, atividades, eventos e anuncios do site.">
-                    <form onSubmit={handlePublicationSubmit} className="grid gap-3 md:grid-cols-2">
-                      <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Titulo" value={publicationForm.title || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, title: e.target.value }))} required />
-                      <select className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" value={publicationForm.category || "noticia"} onChange={(e) => setPublicationForm((f) => ({ ...f, category: e.target.value as PublicationCategory }))}>
+                    <form onSubmit={handlePublicationSubmit} className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_260px]">
+                      <input className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Titulo" value={publicationForm.title || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, title: e.target.value }))} required />
+                      <select className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" value={publicationForm.category || "noticia"} onChange={(e) => setPublicationForm((f) => ({ ...f, category: e.target.value as PublicationCategory }))}>
                         <option value="noticia">Noticia</option>
                         <option value="atividade">Atividade</option>
                         <option value="evento">Evento</option>
@@ -434,9 +442,10 @@ export default function AdminPanel() {
                         <option value="obra">Obra</option>
                         <option value="recrutamento">Recrutamento</option>
                       </select>
-                      <textarea className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 md:col-span-2" placeholder="Conteudo" value={publicationForm.content || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, content: e.target.value }))} required />
-                      <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="URL da imagem" value={publicationForm.image_url || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, image_url: e.target.value }))} />
-                      <button className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white" disabled={busy}>{busy ? "A gravar..." : "Guardar Publicacao"}</button>
+                      <textarea className="min-h-28 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 md:col-span-2 xl:col-span-2" placeholder="Conteudo" value={publicationForm.content || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, content: e.target.value }))} required />
+                      <input className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="URL da imagem" value={publicationForm.image_url || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, image_url: e.target.value }))} />
+                      <input className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white" type="file" accept="image/*" onChange={(e) => setPublicationFile(e.target.files?.[0] || null)} />
+                      <button className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white md:col-span-2 xl:col-span-2" disabled={busy}>{busy ? "A gravar..." : "Guardar Publicacao"}</button>
                     </form>
                     <DataTable headers={["ID", "Titulo", "Categoria", "Ativa", "Acoes"]}>
                       {publications.map((item) => (
@@ -495,22 +504,22 @@ export default function AdminPanel() {
 
 function Panel({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-6">
+    <section className="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-6">
       <div className="mb-5">
-        <h2 className="text-xl font-bold text-slate-900">{title}</h2>
+        <h2 className="break-words text-xl font-bold text-slate-900">{title}</h2>
         <p className="text-sm text-slate-500">{subtitle}</p>
       </div>
-      <div className="space-y-5">{children}</div>
+      <div className="min-w-0 space-y-5">{children}</div>
     </section>
   );
 }
 
 function DataTable({ headers, children }: { headers: string[]; children: ReactNode }) {
   return (
-    <div className="-mx-4 overflow-x-auto border-y border-slate-100 sm:mx-0 sm:rounded-xl sm:border">
-      <table className="min-w-[720px] bg-white text-sm">
+    <div className="-mx-4 max-w-[calc(100%+2rem)] overflow-x-auto border-y border-slate-100 sm:mx-0 sm:max-w-full sm:rounded-xl sm:border">
+      <table className="w-full min-w-[620px] bg-white text-sm">
         <thead className="bg-slate-50 text-slate-600">
-          <tr>{headers.map((item) => <th key={item} className="p-3 text-left font-semibold">{item}</th>)}</tr>
+          <tr>{headers.map((item) => <th key={item} className="whitespace-nowrap p-3 text-left font-semibold">{item}</th>)}</tr>
         </thead>
         <tbody>{children}</tbody>
       </table>
