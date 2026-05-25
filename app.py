@@ -81,14 +81,21 @@ def create_app(config_name=None):
     mail.init_app(app)
     
     # CORS (permite requests do frontend e mantém cookies de sessão)
+    cors_origins = [
+        origin.strip()
+        for origin in os.environ.get('CORS_ORIGINS', '').split(',')
+        if origin.strip()
+    ] + [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        r"https://.*\.vercel\.app",
+    ]
+
     CORS(app, resources={
         r"/api/*": {
-            "origins": [
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
-                "http://localhost:5000",
-                "http://127.0.0.1:5000"
-            ],
+            "origins": cors_origins,
             "supports_credentials": True
         }
     })
