@@ -1,0 +1,44 @@
+# ============================================
+# DOIS LADOS - Dependências Python
+# ============================================
+# Escritório de Arquitetura e Construção
+# Luanda, Angola
+# ============================================
+
+# Framework Web
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Base de Dados
+Flask-SQLAlchemy==3.0.5
+Flask-Migrate==4.0.7
+PyMySQL==1.1.0
+cryptography==41.0.4
+
+# Autenticação
+Flask-Login==0.6.2
+
+# Validação de Forms
+Flask-WTF==1.1.1
+WTForms==3.0.1
+email-validator==2.0.0
+
+# E-mail
+Flask-Mail==0.9.1
+
+# CORS (comunicação com frontend)
+Flask-CORS==4.0.0
+
+# Utilitários
+python-dotenv==1.0.0
+Pillow==10.0.1  # Para processamento de imagens
+
+# Servidor de produção (opcional)
+gunicorn==21.2.0
+
+# Testing
+pytest==7.4.2
+pytest-flask==1.2.0
+
+# Desenvolvimento
+python-dotenv==1.0.0

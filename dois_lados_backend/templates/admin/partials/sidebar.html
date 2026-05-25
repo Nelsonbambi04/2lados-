@@ -1,0 +1,190 @@
+<!-- Admin Sidebar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 z-40 hidden lg:block">
+    
+    <!-- Logo -->
+    <div class="h-16 flex items-center gap-3 px-6 border-b border-gray-100">
+        <div class="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
+            <span class="text-lg font-bold text-gray-900">2L</span>
+        </div>
+        <div>
+            <h1 class="font-bold text-gray-900">Dois Lados</h1>
+            <p class="text-xs text-gray-500">Painel Admin</p>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="p-4 space-y-1">
+        
+        <a href="{{ url_for('admin.dashboard') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 
+                  {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+            <span>Dashboard</span>
+        </a>
+        
+        <a href="{{ url_for('admin.list_projects') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4
+                  {% if 'admin.list_projects' in request.endpoint or 'admin.create_project' in request.endpoint %}active{% endif %}">
+            <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+            <span>Projetos</span>
+        </a>
+        
+        <a href="{{ url_for('admin.manage_phases', project_id=0) if false else '#' }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 text-gray-400 cursor-not-allowed"
+           onclick="event.preventDefault()">
+            <i data-lucide="gantt-chart" class="w-5 h-5"></i>
+            <span>Cronograma</span>
+            <span class="ml-auto text-xs bg-gray-200 px-2 py-0.5 rounded">Em breve</span>
+        </a>
+        
+        <a href="{{ url_for('admin.list_quotes') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4
+                  {% if 'admin.list_quotes' in request.endpoint %}active{% endif %}">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+            <span>Orçamentos</span>
+            {% if stats.pending_quotes > 0 %}
+            <span class="ml-auto bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                {{ stats.pending_quotes }}
+            </span>
+            {% endif %}
+        </a>
+        
+        <a href="{{ url_for('admin.list_portfolio') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4
+                  {% if 'admin.list_portfolio' in request.endpoint %}active{% endif %}">
+            <i data-lucide="images" class="w-5 h-5"></i>
+            <span>Portfólio</span>
+        </a>
+        
+        <a href="{{ url_for('admin.list_messages') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4
+                  {% if 'admin.list_messages' in request.endpoint %}active{% endif %}">
+            <i data-lucide="mail" class="w-5 h-5"></i>
+            <span>Mensagens</span>
+            {% if stats.total_messages > 0 %}
+            <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                {{ stats.total_messages }}
+            </span>
+            {% endif %}
+        </a>
+        
+        <div class="border-t border-gray-200 my-4"></div>
+        
+        <a href="{{ url_for('auth.list_users') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4
+                  {% if 'auth.list_users' in request.endpoint %}active{% endif %}">
+            <i data-lucide="users" class="w-5 h-5"></i>
+            <span>Utilizadores</span>
+        </a>
+        
+        <a href="{{ url_for('auth.admin_create_user') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4
+                  {% if 'auth.admin_create_user' in request.endpoint %}active{% endif %}">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+            <span>Novo Utilizador</span>
+        </a>
+        
+        <div class="border-t border-gray-200 my-4"></div>
+        
+        <a href="{{ url_for('index') }}" 
+           class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 text-gray-500 hover:text-gray-700">
+            <i data-lucide="globe" class="w-5 h-5"></i>
+            <span>Ver Site</span>
+        </a>
+        
+    </nav>
+    
+    <!-- User Info -->
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <i data-lucide="user" class="w-5 h-5 text-gray-500"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-900 truncate">{{ current_user.username }}</p>
+                <p class="text-xs text-gray-500">
+                    {% if current_user.is_admin %}Administrador{% else %}Utilizador{% endif %}
+                </p>
+            </div>
+            <a href="{{ url_for('auth.logout') }}" 
+               class="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50"
+               title="Terminar sessão">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+            </a>
+        </div>
+    </div>
+    
+</aside>
+
+<!-- Mobile Menu Button -->
+<button id="mobileMenuBtn" class="lg:hidden fixed bottom-4 right-4 z-50 w-14 h-14 bg-yellow-400 rounded-full shadow-lg flex items-center justify-center">
+    <i data-lucide="menu" class="w-6 h-6 text-gray-900"></i>
+</button>
+
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebarOverlay" class="lg:hidden fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+<!-- Mobile Sidebar -->
+<div id="mobileSidebar" class="lg:hidden fixed left-0 top-0 h-full w-72 bg-white z-40 transform -translate-x-full transition-transform">
+    
+    <div class="h-16 flex items-center justify-between px-6 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
+                <span class="text-lg font-bold text-gray-900">2L</span>
+            </div>
+            <span class="font-bold text-gray-900">Dois Lados</span>
+        </div>
+        <button id="closeMobileSidebar" class="p-2 text-gray-400 hover:text-gray-600">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+    </div>
+    
+    <nav class="p-4 space-y-1">
+        <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('admin.list_projects') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100">
+            <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+            <span>Projetos</span>
+        </a>
+        <a href="{{ url_for('admin.list_quotes') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+            <span>Orçamentos</span>
+        </a>
+        <a href="{{ url_for('admin.list_portfolio') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100">
+            <i data-lucide="images" class="w-5 h-5"></i>
+            <span>Portfólio</span>
+        </a>
+        <a href="{{ url_for('admin.list_messages') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100">
+            <i data-lucide="mail" class="w-5 h-5"></i>
+            <span>Mensagens</span>
+        </a>
+        <a href="{{ url_for('auth.list_users') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100">
+            <i data-lucide="users" class="w-5 h-5"></i>
+            <span>Utilizadores</span>
+        </a>
+    </nav>
+    
+</div>
+
+<script>
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const closeMobileSidebar = document.getElementById('closeMobileSidebar');
+    
+    function openSidebar() {
+        mobileSidebar.classList.remove('-translate-x-full');
+        sidebarOverlay.classList.remove('hidden');
+    }
+    
+    function closeSidebar() {
+        mobileSidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+    }
+    
+    mobileMenuBtn.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+    closeMobileSidebar.addEventListener('click', closeSidebar);
+</script>

@@ -1,0 +1,4 @@
+/* Estilos mínimos para layout base; personalize conforme necessário */
+body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #f8f9fa; }
+h1, h2 { color: #111; }
+.card img { object-fit: cover; height: 200px; }

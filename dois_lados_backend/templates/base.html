@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dois Lados{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='uploads/dois-lados-logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='uploads/dois-lados-logo.png') }}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Colors */
+        :root {
+            --yellow-primary: #DB9B2D;
+            --yellow-light: #F9ECD0;
+            --yellow-dark: #A96D19;
+            --yellow-hover: #C8871F;
+            --yellow-muted: rgba(219, 155, 45, 0.1);
+            --yellow-soft: rgba(219, 155, 45, 0.2);
+        }
+        
+        .bg-yellow-primary { background-color: var(--yellow-primary); }
+        .text-yellow-primary { color: var(--yellow-primary); }
+        .border-yellow-primary { border-color: var(--yellow-primary); }
+
+        .bg-yellow-50 { background-color: #FDF8ED !important; }
+        .bg-yellow-100 { background-color: var(--yellow-light) !important; }
+        .bg-yellow-400, .bg-yellow-500 { background-color: var(--yellow-primary) !important; }
+        .bg-yellow-400\/10, .bg-yellow-500\/10 { background-color: var(--yellow-muted) !important; }
+        .bg-yellow-400\/20, .bg-yellow-500\/20 { background-color: var(--yellow-soft) !important; }
+        .bg-yellow-500\/5 { background-color: rgba(219, 155, 45, 0.05) !important; }
+        .text-yellow-300, .text-yellow-400, .text-yellow-500, .text-yellow-600 { color: var(--yellow-primary) !important; }
+        .text-yellow-700 { color: var(--yellow-dark) !important; }
+        .border-yellow-300, .border-yellow-400 { border-color: var(--yellow-primary) !important; }
+        .hover\:bg-yellow-50:hover { background-color: #FDF8ED !important; }
+        .hover\:bg-yellow-400:hover, .hover\:bg-yellow-500:hover { background-color: var(--yellow-hover) !important; }
+        .hover\:text-yellow-400:hover, .hover\:text-yellow-500:hover, .hover\:text-yellow-600:hover { color: var(--yellow-primary) !important; }
+        .hover\:border-yellow-400:hover { border-color: var(--yellow-primary) !important; }
+        .focus\:ring-yellow-400:focus, .focus\:ring-yellow-400\/50:focus { --tw-ring-color: rgba(219, 155, 45, 0.5) !important; }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Input Focus */
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--yellow-primary);
+            box-shadow: 0 0 0 3px var(--yellow-soft);
+        }
+        
+        /* Sidebar */
+        .sidebar-link {
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--yellow-muted);
+            border-left-color: var(--yellow-primary);
+        }
+        
+        .sidebar-link.active {
+            background-color: rgba(219, 155, 45, 0.15);
+            border-left-color: var(--yellow-primary);
+            color: var(--yellow-primary);
+        }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-800">
+    
+    {% block body %}
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="fixed top-4 right-4 z-50 space-y-2">
+            {% for category, message in messages %}
+            <div class="flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg fade-in
+                {% if category == 'error' %}bg-red-500 text-white
+                {% elif category == 'success' %}bg-green-500 text-white
+                {% elif category == 'warning' %}bg-yellow-500 text-gray-900
+                {% else %}bg-blue-500 text-white{% endif %}">
+                {% if category == 'success' %}
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                {% elif category == 'error' %}
+                <i data-lucide="x-circle" class="w-5 h-5"></i>
+                {% elif category == 'warning' %}
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                {% else %}
+                <i data-lucide="info" class="w-5 h-5"></i>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    
+    {% block content %}{% endblock %}
+    
+    {% endblock %}
+    
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+        
+        // Auto-hide alerts after 5 seconds
+        document.querySelectorAll('[class*="fixed.*top-4"] > div').forEach(alert => {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(100%)';
+                alert.style.transition = 'all 0.3s ease';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
