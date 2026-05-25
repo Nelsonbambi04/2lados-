@@ -2,8 +2,7 @@ import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import logo from "../assets/dois-lados-logo.png";
-
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+import { API_BASE } from "../services/api";
 
 export default function Login() {
   const nav = useNavigate();
@@ -18,7 +17,7 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`${API_BASE}/api/login`, {
+      const res = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, remember: true }),

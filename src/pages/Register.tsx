@@ -1,7 +1,6 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+import { API_BASE } from "../services/api";
 
 export default function Register() {
   const nav = useNavigate();
@@ -16,7 +15,7 @@ export default function Register() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`${API_BASE}/api/register`, {
+      const res = await fetch(`${API_BASE}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),

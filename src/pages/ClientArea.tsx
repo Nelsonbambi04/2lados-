@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { mockClients, clientProjects, ClientProject } from "../data/mockData";
 import logo from "../assets/dois-lados-logo.png";
+import { API_BASE } from "../services/api";
 
 // ============================================
 // CLIENT AREA PAGE - Login + Dashboard
@@ -65,7 +66,7 @@ export default function ClientArea() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

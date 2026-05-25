@@ -102,10 +102,11 @@ export interface ClientProfile {
   }>;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL ?? '';
+export const API_BASE = (import.meta.env.VITE_API_URL ?? 'https://twolados.onrender.com/api').replace(/\/+$/, '');
 
 export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const apiPath = path.startsWith('/') ? path : `/${path}`;
+  const res = await fetch(`${API_BASE}${apiPath}`, {
     credentials: 'include',
     headers: {
       ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
@@ -126,29 +127,29 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
 
 // Imóveis (exemplo existente)
 export async function getProperties(): Promise<Property[]> {
-  return request<Property[]>('/api/properties');
+  return request<Property[]>('/properties');
 }
 
 // Portfolio admin
 export const getAdminPortfolio = () =>
-  request<{ portfolio: PortfolioItem[] }>('/api/admin/portfolio');
+  request<{ portfolio: PortfolioItem[] }>('/admin/portfolio');
 
 export const getPublicPortfolio = () =>
-  request<{ portfolio: PortfolioItem[] }>('/api/portfolio');
+  request<{ portfolio: PortfolioItem[] }>('/portfolio');
 
 export const createPortfolio = (payload: Partial<PortfolioItem>) =>
-  request<{ item: { id: number } }>('/api/admin/portfolio', { method: 'POST', body: payload as any });
+  request<{ item: { id: number } }>('/admin/portfolio', { method: 'POST', body: payload as any });
 
 export const updatePortfolio = (id: number, payload: Partial<PortfolioItem>) =>
-  request<{ message: string }>(`/api/admin/portfolio/${id}`, { method: 'PUT', body: payload as any });
+  request<{ message: string }>(`/admin/portfolio/${id}`, { method: 'PUT', body: payload as any });
 
 export const deletePortfolio = (id: number) =>
-  request<{ message: string }>(`/api/admin/portfolio/${id}`, { method: 'DELETE' });
+  request<{ message: string }>(`/admin/portfolio/${id}`, { method: 'DELETE' });
 
 export const uploadPortfolioImage = (id: number, file: File) => {
   const fd = new FormData();
   fd.append('image', file);
-  return request<{ message: string }>(`/api/admin/portfolio/${id}/image`, {
+  return request<{ message: string }>(`/admin/portfolio/${id}/image`, {
     method: 'POST',
     body: fd,
   });
@@ -156,7 +157,7 @@ export const uploadPortfolioImage = (id: number, file: File) => {
 
 // Utilizadores / clientes admin
 export const getAdminUsers = () =>
-  request<{ users: AdminUser[] }>('/api/admin/users');
+  request<{ users: AdminUser[] }>('/admin/users');
 
 export const createAdminUser = (payload: {
   username: string;
@@ -164,75 +165,75 @@ export const createAdminUser = (payload: {
   password: string;
   is_admin?: boolean;
 }) =>
-  request<{ user: AdminUser; message: string }>('/api/admin/users', {
+  request<{ user: AdminUser; message: string }>('/admin/users', {
     method: 'POST',
     body: payload as any,
   });
 
 export const updateAdminUser = (id: number, payload: Partial<Pick<AdminUser, 'is_admin' | 'is_active'>>) =>
-  request<{ message: string }>(`/api/admin/users/${id}`, {
+  request<{ message: string }>(`/admin/users/${id}`, {
     method: 'PUT',
     body: payload as any,
   });
 
 export const deleteAdminUser = (id: number) =>
-  request<{ message: string }>(`/api/admin/users/${id}`, { method: 'DELETE' });
+  request<{ message: string }>(`/admin/users/${id}`, { method: 'DELETE' });
 
 // Publicacoes
 export const getPublicPublications = (category?: PublicationCategory | '') =>
   request<{ publications: Publication[] }>(
-    category ? `/api/publications?category=${encodeURIComponent(category)}` : '/api/publications'
+    category ? `/publications?category=${encodeURIComponent(category)}` : '/publications'
   );
 
 export const getAdminPublications = () =>
-  request<{ publications: Publication[] }>('/api/admin/publications');
+  request<{ publications: Publication[] }>('/admin/publications');
 
 export const createPublication = (payload: Partial<Publication>) =>
-  request<{ publication: Publication }>('/api/admin/publications', {
+  request<{ publication: Publication }>('/admin/publications', {
     method: 'POST',
     body: payload as any,
   });
 
 export const updatePublication = (id: number, payload: Partial<Publication>) =>
-  request<{ publication: Publication }>(`/api/admin/publications/${id}`, {
+  request<{ publication: Publication }>(`/admin/publications/${id}`, {
     method: 'PUT',
     body: payload as any,
   });
 
 export const deletePublication = (id: number) =>
-  request<{ message: string }>(`/api/admin/publications/${id}`, { method: 'DELETE' });
+  request<{ message: string }>(`/admin/publications/${id}`, { method: 'DELETE' });
 
 // Mensagens admin (marcar lida/arquivar)
 export const markMessageRead = (id: number, is_read = true) =>
-  request<{ message: string }>(`/api/admin/messages/${id}`, {
+  request<{ message: string }>(`/admin/messages/${id}`, {
     method: 'PUT',
     body: { is_read },
   });
 
 export const deleteMessage = (id: number) =>
-  request<{ message: string }>(`/api/admin/messages/${id}`, { method: 'DELETE' });
+  request<{ message: string }>(`/admin/messages/${id}`, { method: 'DELETE' });
 
 // Mensagens admin
 export const getAdminMessages = () =>
-  request<{ messages: MessageItem[] }>('/api/admin/messages');
+  request<{ messages: MessageItem[] }>('/admin/messages');
 
 // Orçamentos admin
-export const getAdminQuotes = () => request<{ quotes: Quote[] }>('/api/admin/quotes');
+export const getAdminQuotes = () => request<{ quotes: Quote[] }>('/admin/quotes');
 export const updateQuoteStatus = (id: number, status: string, admin_notes?: string) =>
-  request<{ message: string }>(`/api/admin/quotes/${id}`, {
+  request<{ message: string }>(`/admin/quotes/${id}`, {
     method: 'PUT',
     body: { status, admin_notes },
   });
 
 // Perfil cliente
-export const getClientProfile = () => request<ClientProfile>('/api/client/profile');
+export const getClientProfile = () => request<ClientProfile>('/client/profile');
 
 export const sendClientMessage = (payload: { subject?: string; content: string; attachment?: File | null }) => {
   const fd = new FormData();
   fd.append('subject', payload.subject || '');
   fd.append('content', payload.content);
   if (payload.attachment) fd.append('attachment', payload.attachment);
-  return request<{ message: string; item: ClientProfile['messages'][number] }>('/api/client/messages', {
+  return request<{ message: string; item: ClientProfile['messages'][number] }>('/client/messages', {
     method: 'POST',
     body: fd,
   });
@@ -249,7 +250,7 @@ export const sendAdminMessage = (payload: {
   fd.append('subject', payload.subject || '');
   fd.append('content', payload.content);
   if (payload.attachment) fd.append('attachment', payload.attachment);
-  return request<{ message: string; item: MessageItem }>('/api/admin/messages', {
+  return request<{ message: string; item: MessageItem }>('/admin/messages', {
     method: 'POST',
     body: fd,
   });

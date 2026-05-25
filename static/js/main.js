@@ -1,6 +1,6 @@
 // Conexão do front-end (HTML + Bootstrap) com a API Flask
 // Ajuste API_BASE se o backend estiver noutro host/porta.
-const API_BASE = window.API_BASE || 'http://127.0.0.1:5000';
+const API_BASE = (window.API_BASE || 'https://twolados.onrender.com/api').replace(/\/+$/, '');
 
 // Helper genérico para GET/POST com fetch + cookies de sessão
 async function apiRequest(path, { method = 'GET', body } = {}) {
@@ -27,7 +27,7 @@ async function loadPortfolio() {
 
   container.innerHTML = '<div class="text-muted">A carregar portfólio...</div>';
   try {
-    const { portfolio } = await apiRequest('/api/portfolio');
+    const { portfolio } = await apiRequest('/portfolio');
     if (!portfolio || !portfolio.length) {
       container.innerHTML = '<div class="text-muted">Nenhum item disponível.</div>';
       return;
@@ -67,7 +67,7 @@ async function loadPublicProjects() {
 
   container.innerHTML = '<div class="text-muted">A carregar projetos...</div>';
   try {
-    const { projects } = await apiRequest('/api/projects/public');
+    const { projects } = await apiRequest('/projects/public');
     if (!projects || !projects.length) {
       container.innerHTML = '<div class="text-muted">Nenhum projeto disponível.</div>';
       return;
@@ -125,7 +125,7 @@ async function handleContactSubmit(event) {
   };
 
   try {
-    await apiRequest('/api/contact', { method: 'POST', body: payload });
+    await apiRequest('/contact', { method: 'POST', body: payload });
     showAlert('contact-alert', 'Mensagem enviada! Vamos responder em breve.', 'success');
     form.reset();
   } catch (err) {
@@ -137,7 +137,7 @@ async function handleContactSubmit(event) {
 }
 
 async function handleScheduleSubmit(event) {
-  // Usa o endpoint público de orçamentos/agendamento: POST /api/quotes
+  // Usa o endpoint público de orçamentos/agendamento: POST /quotes
   event.preventDefault();
   const form = event.target;
   const btn = form.querySelector('button[type="submit"]');
@@ -155,7 +155,7 @@ async function handleScheduleSubmit(event) {
   };
 
   try {
-    await apiRequest('/api/quotes', { method: 'POST', body: payload });
+    await apiRequest('/quotes', { method: 'POST', body: payload });
     showAlert('schedule-alert', 'Pedido enviado! Confirmaremos por e-mail.', 'success');
     form.reset();
   } catch (err) {
@@ -193,7 +193,7 @@ async function handleLogin(event) {
   };
 
   try {
-    const data = await apiRequest('/api/login', { method: 'POST', body: payload });
+    const data = await apiRequest('/login', { method: 'POST', body: payload });
     // guarda utilizador para uso no dashboard
     localStorage.setItem('dl_user', JSON.stringify(data.user));
     window.location.href = '/dashboard.html';
@@ -211,7 +211,7 @@ async function loadDashboard() {
 
   container.innerHTML = '<div class="text-muted">A carregar dashboard...</div>';
   try {
-    const data = await apiRequest('/api/admin/dashboard');
+    const data = await apiRequest('/admin/dashboard');
     renderDashboard(container, data);
   } catch (err) {
     container.innerHTML = `<div class="alert alert-danger">Erro: ${err.message}. Confirme se a sessão continua ativa.</div>`;

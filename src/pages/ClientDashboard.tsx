@@ -21,7 +21,7 @@ export default function ClientDashboard() {
     try {
       const profile = await getClientProfile();
       setData(profile);
-      const projectRes = await request<{ projects: any[] }>("/api/client/projects");
+      const projectRes = await request<{ projects: any[] }>("/client/projects");
       setProjects(projectRes.projects);
       setError("");
     } catch (err: any) {
