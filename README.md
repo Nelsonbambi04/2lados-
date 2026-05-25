@@ -294,7 +294,7 @@ npm run dev
 
 ```javascript
 // src/services/api.js
-const API_BASE = 'https://twolados.onrender.com';
+const API_BASE = 'https://twolados.onrender.com/api';
 
 export const api = {
   login: (data) => fetch(`${API_BASE}/login`, {
