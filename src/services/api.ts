@@ -102,7 +102,7 @@ export interface ClientProfile {
   }>;
 }
 
-export const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+export const API_BASE = (import.meta.env.VITE_API_URL || 'https://twolados.onrender.com/api').replace(/\/+$/, '');
 export const ASSET_BASE = API_BASE.replace(/\/api$/, '');
 
 export function resolveAssetUrl(url?: string | null, fallback = '') {
