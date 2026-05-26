@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckCircle } from 'lucide-react';
-import { services, projects, contactInfo } from '../data/mockData';
+import { services, contactInfo } from '../data/mockData';
+import { getPublicPortfolio, PortfolioItem, resolveAssetUrl } from '../services/api';
 
 const heroImages = [
   '/home-slides/luanda-01.jpg',
@@ -19,6 +20,7 @@ const heroImages = [
 
 export default function Home() {
   const [activeHeroImage, setActiveHeroImage] = useState(0);
+  const [featuredProjects, setFeaturedProjects] = useState<PortfolioItem[]>([]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -28,8 +30,23 @@ export default function Home() {
     return () => window.clearInterval(timer);
   }, []);
 
-  // Projetos em destaque (3 mais recentes)
-  const featuredProjects = projects.slice(0, 3);
+  useEffect(() => {
+    let isMounted = true;
+
+    (async () => {
+      try {
+        const res = await getPublicPortfolio();
+        if (!isMounted) return;
+        setFeaturedProjects(res.portfolio.filter((project) => project.is_active !== false).slice(0, 4));
+      } catch {
+        if (isMounted) setFeaturedProjects([]);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen">
@@ -189,22 +206,19 @@ export default function Home() {
           </div>
 
           {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featuredProjects.length ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
             {featuredProjects.map((project, index) => (
               <Link
                 key={project.id}
                 to="/portfolio"
-                className={`group relative overflow-hidden rounded-2xl ${
-                  index === 0 ? 'md:col-span-2 lg:col-span-2' : ''
-                }`}
+                className="group relative overflow-hidden rounded-2xl"
               >
                 {/* Image */}
                 <img
-                  src={project.image}
+                  src={resolveAssetUrl(project.image_url, 'https://via.placeholder.com/900x600?text=Projeto')}
                   alt={project.title}
-                  className={`w-full object-cover transition-transform duration-500 group-hover:scale-110 ${
-                    index === 0 ? 'h-80 md:h-96' : 'h-64'
-                  }`}
+                  className="h-72 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
 
                 {/* Overlay */}
@@ -224,16 +238,23 @@ export default function Home() {
 
                   {/* Meta */}
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-300">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
-                      {project.location}
-                    </span>
-                    <span>{project.year}</span>
+                    {project.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        {project.location}
+                      </span>
+                    )}
+                    {project.year && <span>{project.year}</span>}
                   </div>
                 </div>
               </Link>
             ))}
           </div>
+          ) : (
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
+              Ainda não existem projetos publicados.
+            </div>
+          )}
         </div>
       </section>
 

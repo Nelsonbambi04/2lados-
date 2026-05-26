@@ -91,7 +91,7 @@ export default function Header() {
               />
               <div className="min-w-0 leading-none">
                 <span className="block truncate text-base font-bold leading-tight tracking-tight text-slate-900 sm:text-xl xl:text-2xl">Dois Lados</span>
-                <span className="block truncate text-[10px] leading-tight text-slate-500 sm:text-xs xl:text-sm">Arquitetura & ConstruÃ§Ã£o</span>
+                <span className="block truncate text-[10px] leading-tight text-slate-500 sm:text-xs xl:text-sm">Arquitetura & Construção</span>
               </div>
             </Link>
 
@@ -211,7 +211,7 @@ export default function Header() {
                 className="hidden lg:flex items-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold text-base rounded-full transition-all hover:shadow-lg hover:shadow-yellow-400/30"
               >
                 <User className="w-4 h-4" />
-                Ãrea do Cliente
+                Área do Cliente
               </Link>
 
               {/* Menu HambÃºrguer (Mobile) */}
@@ -255,7 +255,7 @@ export default function Header() {
                 />
                 <div className="leading-none">
                   <span className="font-bold text-lg leading-tight text-slate-900">Dois Lados</span>
-                  <span className="block text-[11px] leading-tight text-slate-500">Arquitetura & ConstruÃ§Ã£o</span>
+                  <span className="block text-[11px] leading-tight text-slate-500">Arquitetura & Construção</span>
                 </div>
               </Link>
               <button
@@ -299,7 +299,7 @@ export default function Header() {
                   className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold rounded-xl transition-colors"
                 >
                   <User className="w-5 h-5" />
-                  Ãrea do Cliente
+                  Área do Cliente
                 </Link>
               </div>
 
