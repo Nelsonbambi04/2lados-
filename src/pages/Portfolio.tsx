@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, MapPin, Calendar, ExternalLink } from "lucide-react";
+import LoadingLogo from "../components/LoadingLogo";
 import { getPublicPortfolio, PortfolioItem, resolveAssetUrl } from "../services/api";
 
 type Category = "todos" | "residencial" | "comercial" | "urbanismo";
@@ -100,7 +101,7 @@ export default function Portfolio() {
       <section className="py-10">
         <div className="container mx-auto px-4">
           {loading ? (
-            <div className="text-center text-slate-500">A carregar...</div>
+            <LoadingLogo label="A carregar portfólio..." />
           ) : error ? (
             <div className="text-center text-red-600">{error}</div>
           ) : filteredProjects.length ? (

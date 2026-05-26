@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell, Building2, FileText, LogOut, Mail, Send, User } from "lucide-react";
+import LoadingLogo from "../components/LoadingLogo";
 import { ClientProfile, getClientProfile, request, resolveAssetUrl, sendClientMessage } from "../services/api";
 
 export default function ClientDashboard() {
@@ -79,7 +80,7 @@ export default function ClientDashboard() {
   }
 
   if (!data) {
-    return <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-600">A carregar...</main>;
+    return <LoadingLogo fullScreen label="A carregar área do cliente..." />;
   }
 
   const unread = data.messages.filter((item) => !item.is_read).length;

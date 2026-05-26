@@ -9,6 +9,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import LoadingLogo from "../components/LoadingLogo";
 import {
   getPublicPublications,
   Publication,
@@ -139,7 +140,7 @@ export default function Publications() {
       <section className="py-10">
         <div className="container mx-auto px-4">
           {loading ? (
-            <div className="text-center text-slate-500">A carregar...</div>
+            <LoadingLogo label="A carregar publicações..." />
           ) : error ? (
             <div className="text-center text-red-600">{error}</div>
           ) : filtered.length === 0 ? (

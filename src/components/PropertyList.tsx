@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingLogo from './LoadingLogo';
 import { getProperties, Property, resolveAssetUrl } from '../services/api';
 
 // Lista de imóveis consumindo o backend Flask
@@ -27,7 +28,7 @@ export default function PropertyList() {
     };
   }, []);
 
-  if (loading) return <p className="text-slate-600">A carregar imóveis...</p>;
+  if (loading) return <LoadingLogo label="A carregar imóveis..." />;
   if (error) return <p className="text-red-600">{error}</p>;
   if (!properties.length) return <p className="text-slate-600">Nenhum imóvel disponível.</p>;
 
