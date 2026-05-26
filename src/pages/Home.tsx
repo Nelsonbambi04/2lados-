@@ -1,6 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckCircle } from 'lucide-react';
 import { services, projects, contactInfo } from '../data/mockData';
+
+const heroImages = [
+  '/home-slides/luanda-01.jpg',
+  '/home-slides/luanda-02.jpg',
+  '/home-slides/luanda-03.jpg',
+  '/home-slides/luanda-04.jpg',
+  '/home-slides/luanda-05.jpg',
+  '/home-slides/luanda-06.jpg',
+];
 
 // ============================================
 // HOME PAGE - Página Principal
@@ -8,6 +18,16 @@ import { services, projects, contactInfo } from '../data/mockData';
 // ============================================
 
 export default function Home() {
+  const [activeHeroImage, setActiveHeroImage] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveHeroImage((current) => (current + 1) % heroImages.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   // Projetos em destaque (3 mais recentes)
   const featuredProjects = projects.slice(0, 3);
 
@@ -18,13 +38,19 @@ export default function Home() {
           Imagem de fundo + Título impactante + CTA
           ============================================ */}
       <section className="relative flex min-h-[calc(100vh-4rem)] items-center py-16 sm:min-h-[calc(100vh-5rem)] lg:min-h-[90vh]">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80')`
-          }}
-        >
+        {/* Background Slideshow */}
+        <div className="absolute inset-0 overflow-hidden">
+          {heroImages.map((image, index) => (
+            <img
+              key={image}
+              src={image}
+              alt=""
+              aria-hidden="true"
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+                index === activeHeroImage ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          ))}
           {/* Overlay Gradiente */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60" />
         </div>

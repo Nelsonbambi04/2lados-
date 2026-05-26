@@ -83,15 +83,15 @@ export default function Header() {
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex h-16 items-center justify-between sm:h-20 xl:h-24">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 group">
+            <Link to="/" className="flex min-w-0 items-center gap-2.5 group">
               <img
                 src={logo}
                 alt="Dois Lados"
-                className="h-10 w-auto flex-shrink-0 object-contain sm:h-12 xl:h-16"
+                className="h-9 w-auto flex-shrink-0 object-contain sm:h-12 xl:h-16"
               />
-              <div className="hidden sm:block leading-none">
-                <span className="font-bold text-xl leading-tight text-slate-900 tracking-tight xl:text-2xl">Dois Lados</span>
-                <span className="block text-xs leading-tight text-slate-500 xl:text-sm">Arquitetura & Construção</span>
+              <div className="min-w-0 leading-none">
+                <span className="block truncate text-base font-bold leading-tight tracking-tight text-slate-900 sm:text-xl xl:text-2xl">Dois Lados</span>
+                <span className="block truncate text-[10px] leading-tight text-slate-500 sm:text-xs xl:text-sm">Arquitetura & Construção</span>
               </div>
             </Link>
 
