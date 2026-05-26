@@ -61,6 +61,7 @@ from models import db, User, Project, ProjectPhase, Quote, Message as ContactMes
 from functools import wraps
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from threading import Thread
 import os
 import traceback
 import uuid
@@ -72,6 +73,14 @@ PUBLICATION_CATEGORIES = {'noticia', 'atividade', 'evento', 'publicidade', 'obra
 MESSAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'dwg', 'txt'}
 APPLICATION_UPLOAD_EXTENSIONS = {'pdf', 'doc', 'docx'}
 IMAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+
+def send_mail_async(app, mail, msg):
+    with app.app_context():
+        try:
+            mail.send(msg)
+        except Exception as mail_error:
+            app.logger.error(f'Erro ao enviar email: {str(mail_error)}')
 
 
 def save_message_attachment(file_storage):
@@ -2125,40 +2134,38 @@ def submit_contact():
         db.session.add(message)
         db.session.commit()
 
-        try:
-            mail = current_app.extensions.get('mail')
-            recipient = current_app.config.get('CONTACT_EMAIL') or current_app.config.get('APPLICATION_EMAIL', 'doislados08@gmail.com')
-            if mail:
-                msg = Message(
-                    subject=f"Nova mensagem de contacto: {message.subject or 'Sem assunto'}",
-                    recipients=[recipient],
-                    reply_to=message.email,
-                    body=(
-                        "Nova mensagem recebida pelo site Dois Lados.\n\n"
-                        f"Nome: {message.name}\n"
-                        f"Email: {message.email}\n"
-                        f"Telefone: {message.phone or 'Nao informado'}\n"
-                        f"Assunto: {message.subject or 'Sem assunto'}\n\n"
-                        f"Mensagem:\n{message.content}\n"
-                    ),
-                    html=f"""
-                    <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6;">
-                      <h2 style="margin: 0 0 16px;">Nova mensagem de contacto</h2>
-                      <table style="border-collapse: collapse; width: 100%; max-width: 640px;">
-                        <tr><td style="padding: 8px; color: #6B7280;">Nome</td><td style="padding: 8px;">{message.name}</td></tr>
-                        <tr><td style="padding: 8px; color: #6B7280;">Email</td><td style="padding: 8px;"><a href="mailto:{message.email}">{message.email}</a></td></tr>
-                        <tr><td style="padding: 8px; color: #6B7280;">Telefone</td><td style="padding: 8px;">{message.phone or 'Nao informado'}</td></tr>
-                        <tr><td style="padding: 8px; color: #6B7280;">Assunto</td><td style="padding: 8px;">{message.subject or 'Sem assunto'}</td></tr>
-                      </table>
-                      <div style="margin-top: 18px; padding: 16px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px;">
-                        {message.content}
-                      </div>
-                    </div>
-                    """,
-                )
-                mail.send(msg)
-        except Exception as mail_error:
-            current_app.logger.error(f'Erro ao enviar email de contacto: {str(mail_error)}')
+        mail = current_app.extensions.get('mail')
+        recipient = current_app.config.get('CONTACT_EMAIL') or current_app.config.get('APPLICATION_EMAIL', 'doislados08@gmail.com')
+        if mail:
+            msg = Message(
+                subject=f"Nova mensagem de contacto: {message.subject or 'Sem assunto'}",
+                recipients=[recipient],
+                reply_to=message.email,
+                body=(
+                    "Nova mensagem recebida pelo site Dois Lados.\n\n"
+                    f"Nome: {message.name}\n"
+                    f"Email: {message.email}\n"
+                    f"Telefone: {message.phone or 'Nao informado'}\n"
+                    f"Assunto: {message.subject or 'Sem assunto'}\n\n"
+                    f"Mensagem:\n{message.content}\n"
+                ),
+                html=f"""
+                <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6;">
+                  <h2 style="margin: 0 0 16px;">Nova mensagem de contacto</h2>
+                  <table style="border-collapse: collapse; width: 100%; max-width: 640px;">
+                    <tr><td style="padding: 8px; color: #6B7280;">Nome</td><td style="padding: 8px;">{message.name}</td></tr>
+                    <tr><td style="padding: 8px; color: #6B7280;">Email</td><td style="padding: 8px;"><a href="mailto:{message.email}">{message.email}</a></td></tr>
+                    <tr><td style="padding: 8px; color: #6B7280;">Telefone</td><td style="padding: 8px;">{message.phone or 'Nao informado'}</td></tr>
+                    <tr><td style="padding: 8px; color: #6B7280;">Assunto</td><td style="padding: 8px;">{message.subject or 'Sem assunto'}</td></tr>
+                  </table>
+                  <div style="margin-top: 18px; padding: 16px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px;">
+                    {message.content}
+                  </div>
+                </div>
+                """,
+            )
+            app = current_app._get_current_object()
+            Thread(target=send_mail_async, args=(app, mail, msg), daemon=True).start()
         
         return jsonify({
             'success': True,

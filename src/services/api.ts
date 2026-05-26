@@ -102,7 +102,7 @@ export interface ClientProfile {
   }>;
 }
 
-export const API_BASE = (import.meta.env.VITE_API_URL ?? 'https://twolados.onrender.com/api').replace(/\/+$/, '');
+export const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
 export const ASSET_BASE = API_BASE.replace(/\/api$/, '');
 
 export function resolveAssetUrl(url?: string | null, fallback = '') {
@@ -113,20 +113,25 @@ export function resolveAssetUrl(url?: string | null, fallback = '') {
 
 export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const apiPath = path.startsWith('/') ? path : `/${path}`;
-  const res = await fetch(`${API_BASE}${apiPath}`, {
-    credentials: 'include',
-    headers: {
-      ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(options.headers || {}),
-    },
-    ...options,
-    body:
-      options.body instanceof FormData
-        ? options.body
-        : options.body
-        ? JSON.stringify(options.body)
-        : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${apiPath}`, {
+      credentials: 'include',
+      headers: {
+        ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+        ...(options.headers || {}),
+      },
+      ...options,
+      body:
+        options.body instanceof FormData
+          ? options.body
+          : options.body
+          ? JSON.stringify(options.body)
+          : undefined,
+    });
+  } catch {
+    throw new Error('Nao foi possivel ligar ao servidor. Verifique se a API esta online.');
+  }
   const data = (await res.json().catch(() => ({}))) as any;
   if (!res.ok) throw new Error(data.error || data.message || `Erro ${res.status}`);
   return data as T;

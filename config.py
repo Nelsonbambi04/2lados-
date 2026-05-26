@@ -88,7 +88,8 @@ class MailConfig:
     
     # Credenciais (NUNCA hardcoded - usar variáveis de ambiente!)
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_PASSWORD = (os.environ.get('MAIL_PASSWORD') or '').replace(' ', '') or None
+    MAIL_TIMEOUT = int(os.environ.get('MAIL_TIMEOUT') or 10)
     
     # Remetente
     MAIL_DEFAULT_SENDER = (
