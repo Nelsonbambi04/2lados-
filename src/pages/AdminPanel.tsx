@@ -50,8 +50,8 @@ const tabs: Array<{ id: Tab; label: string; icon: typeof Users }> = [
   { id: "clients", label: "Clientes", icon: Users },
   { id: "messages", label: "Comunicacao", icon: Mail },
   { id: "projects", label: "Projetos", icon: FolderOpen },
-  { id: "publications", label: "Publicacoes", icon: Newspaper },
-  { id: "quotes", label: "Orcamentos", icon: FileText },
+  { id: "publications", label: "Publicações", icon: Newspaper },
+  { id: "quotes", label: "Orçamentos", icon: FileText },
 ];
 
 export default function AdminPanel() {
@@ -239,13 +239,25 @@ export default function AdminPanel() {
                 </div>
               </div>
               <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
-                <button className="relative rounded-lg p-2 hover:bg-slate-100">
+                <button
+                  onClick={() => setActiveTab("messages")}
+                  className="relative rounded-lg p-2 hover:bg-slate-100"
+                  type="button"
+                  title="Ver mensagens"
+                  aria-label="Ver mensagens"
+                >
                   <Bell className="h-5 w-5 text-slate-600" />
                   {stats.unreadMessages > 0 && (
                     <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-yellow-400" />
                   )}
                 </button>
-                <button className="rounded-lg p-2 hover:bg-slate-100">
+                <button
+                  onClick={() => setActiveTab("clients")}
+                  className="rounded-lg p-2 hover:bg-slate-100"
+                  type="button"
+                  title="Gerir clientes"
+                  aria-label="Gerir clientes"
+                >
                   <Settings className="h-5 w-5 text-slate-600" />
                 </button>
                 <button
@@ -296,7 +308,7 @@ export default function AdminPanel() {
                     <StatCard icon={Users} value={stats.activeClients} label="Clientes Ativos" color="yellow" />
                     <StatCard icon={Mail} value={stats.unreadMessages} label="Mensagens Novas" color="blue" />
                     <StatCard icon={FolderOpen} value={stats.projects} label="Projetos" color="green" />
-                    <StatCard icon={FileText} value={stats.pendingQuotes} label="Orcamentos" color="purple" />
+                    <StatCard icon={FileText} value={stats.pendingQuotes} label="Orçamentos" color="purple" />
                   </div>
                 )}
 
@@ -308,7 +320,7 @@ export default function AdminPanel() {
                       <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" type="password" placeholder="Password inicial" value={clientForm.password} onChange={(e) => setClientForm((f) => ({ ...f, password: e.target.value }))} required />
                       <button className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white" disabled={busy}>{busy ? "A criar..." : "Adicionar Cliente"}</button>
                     </form>
-                    <DataTable headers={["Cliente", "Email", "Tipo", "Projetos", "Estado", "Acoes"]}>
+                    <DataTable headers={["Cliente", "Email", "Tipo", "Projetos", "Estado", "Ações"]}>
                       {users.map((item) => (
                         <tr key={item.id} className="border-b border-slate-100">
                           <td className="p-3 font-medium">{item.username}</td>
@@ -403,9 +415,9 @@ export default function AdminPanel() {
                 )}
 
                 {activeTab === "projects" && (
-                  <Panel title="Projetos / Portfolio" subtitle="Conteudo publico do portfolio do site.">
+                  <Panel title="Projetos / Portfólio" subtitle="Conteúdo público do portfólio do site.">
                     <form onSubmit={handleProjectSubmit} className="grid gap-3 md:grid-cols-2">
-                      <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Titulo" value={projectForm.title || ""} onChange={(e) => setProjectForm((f) => ({ ...f, title: e.target.value }))} required />
+                      <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Título" value={projectForm.title || ""} onChange={(e) => setProjectForm((f) => ({ ...f, title: e.target.value }))} required />
                       <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Categoria" value={projectForm.category || ""} onChange={(e) => setProjectForm((f) => ({ ...f, category: e.target.value }))} />
                       <textarea className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 md:col-span-2" placeholder="Descricao" value={projectForm.description || ""} onChange={(e) => setProjectForm((f) => ({ ...f, description: e.target.value }))} />
                       <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Localizacao" value={projectForm.location || ""} onChange={(e) => setProjectForm((f) => ({ ...f, location: e.target.value }))} />
@@ -413,7 +425,7 @@ export default function AdminPanel() {
                       <input className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
                       <button className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white" disabled={busy}>{busy ? "A gravar..." : "Guardar Projeto"}</button>
                     </form>
-                    <DataTable headers={["ID", "Titulo", "Categoria", "Ativo", "Acoes"]}>
+                    <DataTable headers={["ID", "Título", "Categoria", "Ativo", "Ações"]}>
                       {portfolio.map((item) => (
                         <tr key={item.id} className="border-b border-slate-100">
                           <td className="p-3">{item.id}</td>
@@ -431,23 +443,23 @@ export default function AdminPanel() {
                 )}
 
                 {activeTab === "publications" && (
-                  <Panel title="Publicacoes" subtitle="Noticias, atividades, eventos e anuncios do site.">
+                  <Panel title="Publicações" subtitle="Notícias, atividades, eventos e anúncios do site.">
                     <form onSubmit={handlePublicationSubmit} className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_260px]">
-                      <input className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Titulo" value={publicationForm.title || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, title: e.target.value }))} required />
+                      <input className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="Título" value={publicationForm.title || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, title: e.target.value }))} required />
                       <select className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" value={publicationForm.category || "noticia"} onChange={(e) => setPublicationForm((f) => ({ ...f, category: e.target.value as PublicationCategory }))}>
-                        <option value="noticia">Noticia</option>
+                        <option value="noticia">Notícia</option>
                         <option value="atividade">Atividade</option>
                         <option value="evento">Evento</option>
                         <option value="publicidade">Publicidade</option>
                         <option value="obra">Obra</option>
                         <option value="recrutamento">Recrutamento</option>
                       </select>
-                      <textarea className="min-h-28 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 md:col-span-2 xl:col-span-2" placeholder="Conteudo" value={publicationForm.content || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, content: e.target.value }))} required />
+                      <textarea className="min-h-28 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 md:col-span-2 xl:col-span-2" placeholder="Conteúdo" value={publicationForm.content || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, content: e.target.value }))} required />
                       <input className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" placeholder="URL da imagem" value={publicationForm.image_url || ""} onChange={(e) => setPublicationForm((f) => ({ ...f, image_url: e.target.value }))} />
                       <input className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white" type="file" accept="image/*" onChange={(e) => setPublicationFile(e.target.files?.[0] || null)} />
                       <button className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white md:col-span-2 xl:col-span-2" disabled={busy}>{busy ? "A gravar..." : "Guardar Publicacao"}</button>
                     </form>
-                    <DataTable headers={["ID", "Titulo", "Categoria", "Ativa", "Acoes"]}>
+                    <DataTable headers={["ID", "Título", "Categoria", "Ativa", "Ações"]}>
                       {publications.map((item) => (
                         <tr key={item.id} className="border-b border-slate-100">
                           <td className="p-3">{item.id}</td>
@@ -465,7 +477,7 @@ export default function AdminPanel() {
                 )}
 
                 {activeTab === "quotes" && (
-                  <Panel title="Orcamentos" subtitle="Pedidos recebidos pelo formulario publico.">
+                  <Panel title="Orçamentos" subtitle="Pedidos recebidos pelo formulário público.">
                     <select className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3" value={quoteFilter} onChange={(e) => setQuoteFilter(e.target.value)}>
                       <option value="">Todos</option>
                       <option value="pendente">Pendente</option>

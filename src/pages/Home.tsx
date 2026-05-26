@@ -46,7 +46,7 @@ export default function Home() {
               src={image}
               alt=""
               aria-hidden="true"
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+              className={`absolute inset-0 h-full w-full scale-[1.01] object-cover blur-[1px] transition-opacity duration-1000 ease-in-out ${
                 index === activeHeroImage ? 'opacity-100' : 'opacity-0'
               }`}
             />
@@ -76,22 +76,6 @@ export default function Home() {
               gestão rigorosa de obras e design de interiores excepcional.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/contactos"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-yellow-400 px-5 py-3.5 font-bold text-slate-900 transition-all hover:bg-yellow-500 hover:shadow-xl hover:shadow-yellow-400/30 sm:px-8 sm:py-4"
-              >
-                Solicitar Orçamento
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                to="/portfolio"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 sm:px-8 sm:py-4"
-              >
-                Ver Portfólio
-              </Link>
-            </div>
           </div>
         </div>
 

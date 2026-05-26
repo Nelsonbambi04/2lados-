@@ -52,7 +52,7 @@ export default function Login() {
             <img src={logo} alt="Dois Lados" className="h-12 w-auto flex-shrink-0 object-contain" />
             <span className="font-bold text-xl leading-tight text-slate-900">Dois Lados</span>
           </Link>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Area Reservada</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Área Reservada</h1>
           <p className="text-slate-600">Aceda a sua conta para continuar.</p>
         </div>
 

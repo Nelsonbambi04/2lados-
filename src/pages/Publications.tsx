@@ -22,7 +22,7 @@ type Filter = "todos" | PublicationCategory;
 
 const categories: { id: Filter; label: string }[] = [
   { id: "todos", label: "Tudo" },
-  { id: "noticia", label: "Noticias" },
+  { id: "noticia", label: "Notícias" },
   { id: "atividade", label: "Atividades" },
   { id: "evento", label: "Eventos" },
   { id: "publicidade", label: "Publicidades" },
@@ -31,7 +31,7 @@ const categories: { id: Filter; label: string }[] = [
 ];
 
 const categoryLabels: Record<PublicationCategory, string> = {
-  noticia: "Noticia",
+  noticia: "Notícia",
   atividade: "Atividade",
   evento: "Evento",
   publicidade: "Publicidade",
@@ -95,13 +95,13 @@ export default function Publications() {
           <div className="max-w-3xl pb-4">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-950">
               <Newspaper className="h-4 w-4" />
-              Noticias, atividades, vagas e eventos
+              Notícias, atividades, vagas e eventos
             </span>
             <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
-              Publicacoes da Dois Lados
+              Publicações da Dois Lados
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
-              Acompanhe novidades, obras em destaque, anuncios, eventos,
+              Acompanhe novidades, obras em destaque, anúncios, eventos,
               atividades e oportunidades de recrutamento.
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function Publications() {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Pesquisar publicacoes..."
+              placeholder="Pesquisar publicações..."
               className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/30"
             />
           </div>
@@ -145,7 +145,7 @@ export default function Publications() {
             <div className="text-center text-red-600">{error}</div>
           ) : filtered.length === 0 ? (
             <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-500">
-              Nenhuma publicacao encontrada.
+              Nenhuma publicação encontrada.
             </div>
           ) : (
             <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">

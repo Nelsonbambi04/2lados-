@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Building2, FileText, LogOut, Mail, Send, User } from "lucide-react";
+import { AlertCircle, Bell, Building2, FileText, LogIn, LogOut, Mail, Send, User } from "lucide-react";
 import LoadingLogo from "../components/LoadingLogo";
 import { ClientProfile, getClientProfile, request, resolveAssetUrl, sendClientMessage } from "../services/api";
 
@@ -67,12 +67,24 @@ export default function ClientDashboard() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-slate-50 px-4 py-10">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800">
-          <p>{error}</p>
-          <div className="mt-4 flex gap-3">
-            <Link className="rounded-xl bg-slate-900 px-4 py-2 text-white" to="/login">Entrar</Link>
-            <Link className="rounded-xl border border-red-200 px-4 py-2" to="/register">Criar conta</Link>
+      <main className="min-h-screen bg-slate-50 px-4 py-12">
+        <div className="mx-auto max-w-2xl rounded-xl border border-red-100 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
+              <AlertCircle className="h-6 w-6" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg font-bold text-slate-950">Acesso restrito</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                {error}. Inicie sessão com uma conta de cliente autorizada para acompanhar os seus projetos.
+              </p>
+              <div className="mt-5">
+                <Link className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800" to="/login">
+                  <LogIn className="h-4 w-4" />
+                  Entrar
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -99,7 +111,13 @@ export default function ClientDashboard() {
             </div>
           </div>
           <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
-            <button className="relative rounded-lg p-2 hover:bg-slate-100">
+            <button
+              onClick={() => document.getElementById("client-messages")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="relative rounded-lg p-2 hover:bg-slate-100"
+              type="button"
+              title="Ver mensagens"
+              aria-label="Ver mensagens"
+            >
               <Bell className="h-5 w-5 text-slate-600" />
               {unread > 0 && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-yellow-400" />}
             </button>
@@ -119,7 +137,7 @@ export default function ClientDashboard() {
             <Stat icon={FileText} value={unread} label="Por ler" />
           </div>
 
-          <section className="rounded-2xl bg-white p-6 shadow-sm">
+          <section id="client-messages" className="scroll-mt-28 rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="text-lg font-bold text-slate-900">Meus Projetos</h2>
             <div className="mt-4 space-y-4">
               {projects.map((project) => (

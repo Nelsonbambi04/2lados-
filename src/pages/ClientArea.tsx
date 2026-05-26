@@ -308,11 +308,23 @@ export default function ClientArea() {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <button className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors">
+              <button
+                onClick={() => setActiveTab("messages")}
+                className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                type="button"
+                title="Ver mensagens"
+                aria-label="Ver mensagens"
+              >
                 <Bell className="w-5 h-5 text-slate-600" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-yellow-400 rounded-full" />
               </button>
-              <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+              <button
+                onClick={() => setActiveTab("overview")}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                type="button"
+                title="Ver resumo"
+                aria-label="Ver resumo"
+              >
                 <Settings className="w-5 h-5 text-slate-600" />
               </button>
               <button

@@ -56,8 +56,7 @@ export default function Portfolio() {
             Os Nossos Projetos
           </h1>
           <p className="text-slate-300 max-w-3xl">
-            Dados em tempo real a partir da base MySQL (tabela
-            portfolio_items).
+            Conheça alguns dos projetos desenvolvidos pela nossa equipa.
           </p>
         </div>
       </section>

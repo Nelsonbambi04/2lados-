@@ -9,7 +9,7 @@ import logo from '../../assets/dois-lados-logo.png';
 // ============================================
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2023;
 
   return (
     <footer className="bg-slate-900 text-white">

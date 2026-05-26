@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search, User, Phone } from 'lucide-react';
+import { Menu, X, Search, User, Phone, MapPin } from 'lucide-react';
 import { navLinks, contactInfo } from '../../data/mockData';
 import { useSearch, useSearchBar } from '../../hooks/useSearch';
 import logo from '../../assets/dois-lados-logo.png';
 
 // ============================================
-// HEADER COMPONENT - Navegação Principal
-// Contém: Logo, Links, Pesquisa, CTA
-// Responsivo: Menu hambúrguer no mobile
+// HEADER COMPONENT - NavegaÃ§Ã£o Principal
+// ContÃ©m: Logo, Links, Pesquisa, CTA
+// Responsivo: Menu hambÃºrguer no mobile
 // ============================================
 
 export default function Header() {
@@ -42,12 +42,12 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [collapse]);
 
-  // Efeito: Fechar menu mobile ao mudar de página
+  // Efeito: Fechar menu mobile ao mudar de pÃ¡gina
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
 
-  // Efeito: Bloquear scroll quando menu mobile está aberto
+  // Efeito: Bloquear scroll quando menu mobile estÃ¡ aberto
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -79,7 +79,7 @@ export default function Header() {
             : 'bg-white/80 backdrop-blur-sm'
         }`}
       >
-        {/* Navegação Principal */}
+        {/* NavegaÃ§Ã£o Principal */}
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex h-16 items-center justify-between sm:h-20 xl:h-24">
             {/* Logo */}
@@ -91,11 +91,11 @@ export default function Header() {
               />
               <div className="min-w-0 leading-none">
                 <span className="block truncate text-base font-bold leading-tight tracking-tight text-slate-900 sm:text-xl xl:text-2xl">Dois Lados</span>
-                <span className="block truncate text-[10px] leading-tight text-slate-500 sm:text-xs xl:text-sm">Arquitetura & Construção</span>
+                <span className="block truncate text-[10px] leading-tight text-slate-500 sm:text-xs xl:text-sm">Arquitetura & ConstruÃ§Ã£o</span>
               </div>
             </Link>
 
-            {/* Navegação Desktop */}
+            {/* NavegaÃ§Ã£o Desktop */}
             <nav className="hidden xl:flex items-center gap-8 2xl:gap-10">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
@@ -110,7 +110,7 @@ export default function Header() {
                     }`}
                   >
                     {link.label}
-                    {/* Indicador de página ativa */}
+                    {/* Indicador de pÃ¡gina ativa */}
                     <span
                       className={`absolute -bottom-1 left-0 w-full h-0.5 bg-yellow-400 transition-transform origin-left ${
                         isActive ? 'scale-x-100' : 'scale-x-0'
@@ -121,7 +121,7 @@ export default function Header() {
               })}
             </nav>
 
-            {/* Ações: Pesquisa + CTA */}
+            {/* AÃ§Ãµes: Pesquisa + CTA */}
             <div className="flex min-w-0 items-center gap-2 sm:gap-3 lg:gap-4">
               {/* Barra de Pesquisa */}
               <div ref={searchRef} className="relative hidden sm:block">
@@ -205,16 +205,16 @@ export default function Header() {
                 )}
               </div>
 
-              {/* Botão Área do Cliente */}
+              {/* BotÃ£o Ãrea do Cliente */}
               <Link
                 to="/cliente"
                 className="hidden lg:flex items-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold text-base rounded-full transition-all hover:shadow-lg hover:shadow-yellow-400/30"
               >
                 <User className="w-4 h-4" />
-                Área do Cliente
+                Ãrea do Cliente
               </Link>
 
-              {/* Menu Hambúrguer (Mobile) */}
+              {/* Menu HambÃºrguer (Mobile) */}
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -255,7 +255,7 @@ export default function Header() {
                 />
                 <div className="leading-none">
                   <span className="font-bold text-lg leading-tight text-slate-900">Dois Lados</span>
-                  <span className="block text-[11px] leading-tight text-slate-500">Arquitetura & Construção</span>
+                  <span className="block text-[11px] leading-tight text-slate-500">Arquitetura & ConstruÃ§Ã£o</span>
                 </div>
               </Link>
               <button
@@ -268,7 +268,7 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Links de Navegação */}
+            {/* Links de NavegaÃ§Ã£o */}
             <nav className="flex-1 p-4">
               <div className="space-y-1">
                 {navLinks.map((link) => {
@@ -292,28 +292,32 @@ export default function Header() {
                 })}
               </div>
 
-              {/* Botão CTA Mobile */}
+              {/* BotÃ£o CTA Mobile */}
               <div className="mt-6 pt-6 border-t border-slate-100">
                 <Link
                   to="/cliente"
                   className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold rounded-xl transition-colors"
                 >
                   <User className="w-5 h-5" />
-                  Área do Cliente
+                  Ãrea do Cliente
                 </Link>
               </div>
 
               {/* Contactos */}
-              <div className="mt-6 p-4 bg-slate-50 rounded-xl">
-                <h4 className="font-semibold text-slate-900 mb-3">Contacte-nos</h4>
-                <div className="space-y-2 text-sm text-slate-600">
-                  <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 hover:text-yellow-600 transition-colors">
-                    <Phone className="w-4 h-4" />
-                    {contactInfo.phone}
+              <div className="mt-6 rounded-xl border border-slate-100 bg-slate-50 p-4">
+                <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-900">Contacte-nos</h4>
+                <div className="space-y-3 text-sm text-slate-600">
+                  <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="flex items-center gap-3 rounded-lg p-1 transition-colors hover:text-yellow-700">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-yellow-600 shadow-sm">
+                      <Phone className="h-4 w-4" />
+                    </span>
+                    <span className="font-medium leading-5">{contactInfo.phone}</span>
                   </a>
-                  <p className="flex items-start gap-2">
-                    <span className="w-4 h-4 mt-0.5">📍</span>
-                    {contactInfo.address}
+                  <p className="flex items-start gap-3 rounded-lg p-1">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-yellow-600 shadow-sm">
+                      <MapPin className="h-4 w-4" />
+                    </span>
+                    <span className="whitespace-pre-line leading-5">{contactInfo.address}</span>
                   </p>
                 </div>
               </div>
