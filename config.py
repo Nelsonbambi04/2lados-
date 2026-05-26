@@ -87,15 +87,19 @@ class MailConfig:
     MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', 'on', '1')
     
     # Credenciais (NUNCA hardcoded - usar variáveis de ambiente!)
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'nelsonbambi177@gmail.com'
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or ''
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     
     # Remetente
-    MAIL_DEFAULT_SENDER = ('Dois Lados - Arquitetura', 'noreply@doislados.co.ao')
+    MAIL_DEFAULT_SENDER = (
+        'Dois Lados - Arquitetura',
+        os.environ.get('MAIL_DEFAULT_SENDER') or os.environ.get('MAIL_USERNAME') or 'doislados08@gmail.com'
+    )
     
     # Admin destinatário
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or 'nelsonbambi177@gmail.com'
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or 'doislados08@gmail.com'
     APPLICATION_EMAIL = os.environ.get('APPLICATION_EMAIL') or 'doislados08@gmail.com'
+    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL') or 'doislados08@gmail.com'
 
 
 # Combinar configurações

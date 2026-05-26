@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { contactInfo } from '../data/mockData';
+import { submitContactMessage } from '../services/api';
 
 // ============================================
 // CONTACTOS PAGE - Formulário de Contacto
@@ -35,6 +36,7 @@ export default function Contacts() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   // Validação de email
   const isValidEmail = (email: string): boolean => {
@@ -108,17 +110,28 @@ export default function Contacts() {
       return;
     }
 
-    // Simular envio
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    setSubmitError('');
 
-    // Resetar após alguns segundos (opcional)
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    }, 5000);
+    try {
+      await submitContactMessage({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        content: formData.message,
+      });
+      setIsSubmitted(true);
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      }, 5000);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Não foi possível enviar a mensagem.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // ============================================
@@ -333,6 +346,13 @@ export default function Contacts() {
                       </p>
                     )}
                   </div>
+
+                  {submitError && (
+                    <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                      {submitError}
+                    </div>
+                  )}
 
                   {/* Submit Button */}
                   <button

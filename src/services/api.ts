@@ -242,6 +242,18 @@ export const submitJobApplication = (payload: {
   });
 };
 
+export const submitContactMessage = (payload: {
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  content: string;
+}) =>
+  request<{ success: boolean; message: string }>('/contact', {
+    method: 'POST',
+    body: payload,
+  });
+
 // Mensagens admin (marcar lida/arquivar)
 export const markMessageRead = (id: number, is_read = true) =>
   request<{ message: string }>(`/admin/messages/${id}`, {
