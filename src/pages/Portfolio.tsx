@@ -115,7 +115,7 @@ export default function Portfolio() {
                     <img
                       src={resolveAssetUrl(project.image_url, "/placeholder.jpg")}
                       alt={project.title}
-                      className="w-full h-56 object-cover"
+                      className="h-56 w-full bg-slate-100 object-contain"
                     />
                     <span className="absolute top-4 left-4 px-3 py-1 bg-yellow-400 text-slate-900 text-xs font-bold rounded-full">
                       {project.category?.toUpperCase()}

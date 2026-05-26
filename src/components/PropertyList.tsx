@@ -42,7 +42,7 @@ export default function PropertyList() {
           <img
             src={resolveAssetUrl(property.image || property.image_url, 'https://via.placeholder.com/600x400?text=Im%C3%B3vel')}
             alt={property.title}
-            className="w-full h-48 object-cover"
+            className="h-48 w-full bg-slate-100 object-contain"
             loading="lazy"
           />
           <div className="p-4 space-y-2">

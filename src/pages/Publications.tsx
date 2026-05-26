@@ -172,7 +172,7 @@ function PublicationCard({ item, onApply }: { item: Publication; onApply: (item:
     <article className="grid h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       <div className="aspect-[16/10] bg-slate-900">
         {item.image_url ? (
-          <img src={resolveAssetUrl(item.image_url)} alt={item.title} className="h-full w-full object-cover" />
+          <img src={resolveAssetUrl(item.image_url)} alt={item.title} className="h-full w-full object-contain" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-yellow-400">
             {isRecruitment ? <BriefcaseBusiness className="h-14 w-14" /> : <Newspaper className="h-14 w-14" />}
