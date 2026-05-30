@@ -26,9 +26,15 @@ export interface Quote {
   id: number;
   client_name: string;
   client_email: string;
+  client_phone?: string;
   service_type: string;
+  project_type?: string;
+  description?: string;
+  budget_range?: string;
+  location?: string;
   status: string;
   admin_notes?: string;
+  created_at?: string;
 }
 
 export interface MessageItem {
@@ -56,6 +62,64 @@ export interface AdminUser {
   is_active: boolean;
   created_at: string;
   projects_count: number;
+}
+
+export interface ProjectPhase {
+  id: number;
+  phase_name: string;
+  description?: string;
+  phase_order: number;
+  start_date?: string;
+  end_date?: string;
+  status: string;
+}
+
+export interface ProjectItem {
+  id: number;
+  title: string;
+  description?: string;
+  category: string;
+  status: string;
+  client_id?: number | null;
+  client_name?: string | null;
+  client_email?: string | null;
+  budget?: number | null;
+  location?: string;
+  area_sqm?: number | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  created_at: string;
+  updated_at?: string | null;
+  phases_count?: number;
+  documents_count?: number;
+  images_count?: number;
+  phases?: ProjectPhase[];
+}
+
+export type ProjectDocumentType = 'planta' | 'proposta' | 'fatura' | 'orcamento' | 'contrato' | 'relatorio' | 'outro';
+
+export interface ProjectDocument {
+  id: number;
+  project_id: number;
+  document_type: ProjectDocumentType;
+  title: string;
+  description?: string;
+  file_url: string;
+  file_name: string;
+  mime_type?: string;
+  amount?: number | null;
+  status: string;
+  created_at: string;
+  updated_at?: string | null;
+}
+
+export interface ProjectSiteImage {
+  id: number;
+  project_id: number;
+  image_url: string;
+  caption?: string;
+  is_main?: boolean;
+  created_at: string;
 }
 
 export type PublicationCategory = 'noticia' | 'atividade' | 'evento' | 'publicidade' | 'obra' | 'recrutamento';
@@ -167,6 +231,69 @@ export const uploadPortfolioImage = (id: number, file: File) => {
   });
 };
 
+// Obras / projetos internos
+export const getAdminProjects = () =>
+  request<{ projects: ProjectItem[] }>('/admin/projects');
+
+export const createProject = (payload: Partial<ProjectItem>) =>
+  request<{ project: ProjectItem; message: string }>('/admin/projects', { method: 'POST', body: payload as any });
+
+export const updateProject = (id: number, payload: Partial<ProjectItem>) =>
+  request<{ message: string }>(`/admin/projects/${id}`, { method: 'PUT', body: payload as any });
+
+export const deleteProject = (id: number) =>
+  request<{ message: string }>(`/admin/projects/${id}`, { method: 'DELETE' });
+
+export const getProjectDocuments = (projectId: number) =>
+  request<{ documents: ProjectDocument[] }>(`/admin/projects/${projectId}/documents`);
+
+export const uploadProjectDocument = (
+  projectId: number,
+  payload: {
+    file: File;
+    document_type: ProjectDocumentType;
+    title?: string;
+    description?: string;
+    amount?: string | number;
+    status?: string;
+  }
+) => {
+  const fd = new FormData();
+  fd.append('file', payload.file);
+  fd.append('document_type', payload.document_type);
+  if (payload.title) fd.append('title', payload.title);
+  if (payload.description) fd.append('description', payload.description);
+  if (payload.amount !== undefined && payload.amount !== '') fd.append('amount', String(payload.amount));
+  if (payload.status) fd.append('status', payload.status);
+  return request<{ document: ProjectDocument; message: string }>(`/admin/projects/${projectId}/documents`, {
+    method: 'POST',
+    body: fd,
+  });
+};
+
+export const deleteProjectDocument = (id: number) =>
+  request<{ message: string }>(`/admin/project-documents/${id}`, { method: 'DELETE' });
+
+export const getProjectImages = (projectId: number) =>
+  request<{ images: ProjectSiteImage[] }>(`/admin/projects/${projectId}/images`);
+
+export const uploadProjectImage = (
+  projectId: number,
+  payload: { image: File; caption?: string; is_main?: boolean }
+) => {
+  const fd = new FormData();
+  fd.append('image', payload.image);
+  if (payload.caption) fd.append('caption', payload.caption);
+  if (payload.is_main) fd.append('is_main', 'true');
+  return request<{ image: ProjectSiteImage; message: string }>(`/admin/projects/${projectId}/images`, {
+    method: 'POST',
+    body: fd,
+  });
+};
+
+export const deleteProjectImage = (id: number) =>
+  request<{ message: string }>(`/admin/project-images/${id}`, { method: 'DELETE' });
+
 // Utilizadores / clientes admin
 export const getAdminUsers = () =>
   request<{ users: AdminUser[] }>('/admin/users');
@@ -257,6 +384,12 @@ export const submitContactMessage = (payload: {
   request<{ success: boolean; message: string }>('/contact', {
     method: 'POST',
     body: payload,
+  });
+
+export const subscribeNewsletter = (email: string) =>
+  request<{ success: boolean; message: string }>('/newsletter', {
+    method: 'POST',
+    body: { email },
   });
 
 // Mensagens admin (marcar lida/arquivar)

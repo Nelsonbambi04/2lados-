@@ -16,10 +16,12 @@ from flask import Flask
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'seu_usuario'
-app.config['MYSQL_PASSWORD'] = 'sua_senha'
-app.config['MYSQL_DB'] = 'dois_lados_db'
+app.config['MYSQL_HOST'] = 'mysql-25d29d17-doislados.l.aivencloud.com'
+app.config['MYSQL_PORT'] = 23198
+app.config['MYSQL_USER'] = 'avnadmin'
+app.config['MYSQL_PASSWORD'] = 'AVNS_eQhiBribmrQySa_9shY'
+app.config['MYSQL_DB'] = 'defaultdb'
+app.config['MYSQL_SSL'] = True
 
 mysql = MySQL(app)
 """

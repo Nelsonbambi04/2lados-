@@ -154,7 +154,7 @@ nano .env
 **Exemplo .env:**
 ```env
 # Base de dados
-DATABASE_URL=mysql+pymysql://root:sua_senha@localhost/dois_lados?charset=utf8mb4
+DATABASE_URL=mysql+pymysql://avnadmin:SUA_PASSWORD_AIVEN@mysql-25d29d17-doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4
 
 # Segurança (gere uma chave única)
 SECRET_KEY=gere-uma-chave-secreta-aqui
@@ -165,7 +165,10 @@ MAIL_PORT=587
 MAIL_USE_TLS=true
 MAIL_USERNAME=seu_email@gmail.com
 MAIL_PASSWORD=sua_app_password
-ADMIN_EMAIL=nelsonbambi177@gmail.com
+SUBMISSION_EMAIL=doislados08@gmail.com
+ADMIN_EMAIL=doislados08@gmail.com
+APPLICATION_EMAIL=doislados08@gmail.com
+CONTACT_EMAIL=doislados08@gmail.com
 ```
 
 ---
@@ -383,7 +386,7 @@ mysql -u root -p -e "SELECT 1"
 ## 📞 Suporte
 
 Para dúvidas ou problemas:
-- Email: nelsonbambi177@gmail.com
+- Email: doislados08@gmail.com
 - Projeto: Dois Lados - Arquitetura & Construção
 
 ---

@@ -64,16 +64,20 @@ FLASK_APP=app.py
 FLASK_ENV=development
 SECRET_KEY=change-this-to-a-secure-random-key-in-production
 
-# Base de Dados - ALTERE ESTA LINHA
-DATABASE_URL=mysql+pymysql://root:password@localhost:3306/dois_lados?charset=utf8mb4
+# Base de Dados - MySQL Aiven
+DATABASE_URL=mysql+pymysql://avnadmin:AVNS_eQhiBribmrQySa_9shY@mysql-25d29d17-doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4
 
 # E-mail - Gmail App Password
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USE_TLS=True
-MAIL_USERNAME=nelsonbambi177@gmail.com
+MAIL_USERNAME=doislados08@gmail.com
 MAIL_PASSWORD=your-app-password-here
-ADMIN_EMAIL=nelsonbambi177@gmail.com
+MAIL_DEFAULT_SENDER=doislados08@gmail.com
+SUBMISSION_EMAIL=doislados08@gmail.com
+ADMIN_EMAIL=doislados08@gmail.com
+APPLICATION_EMAIL=doislados08@gmail.com
+CONTACT_EMAIL=doislados08@gmail.com
 EOF
 
 info ".env criado."

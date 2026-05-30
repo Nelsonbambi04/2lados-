@@ -148,9 +148,12 @@ dois_lados/
 MAIL_SERVER = smtp.gmail.com
 MAIL_PORT = 587
 MAIL_USE_TLS = True
-MAIL_USERNAME = nelsonbambi177@gmail.com
+MAIL_USERNAME = doislados08@gmail.com
 MAIL_PASSWORD = <app_password>
-ADMIN_EMAIL = nelsonbambi177@gmail.com
+SUBMISSION_EMAIL = doislados08@gmail.com
+ADMIN_EMAIL = doislados08@gmail.com
+APPLICATION_EMAIL = doislados08@gmail.com
+CONTACT_EMAIL = doislados08@gmail.com
 ```
 
 ### Templates de E-mail

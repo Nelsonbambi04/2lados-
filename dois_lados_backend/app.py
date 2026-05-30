@@ -14,6 +14,21 @@ from flask_session import Session
 from datetime import datetime
 import os
 
+AIVEN_DATABASE_URL = (
+    'mysql+pymysql://avnadmin:AVNS_eQhiBribmrQySa_9shY@'
+    'mysql-25d29d17-doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4'
+)
+
+
+def database_url():
+    """Return the MySQL database URL. SQLite/local fallbacks were intentionally removed."""
+    url = os.environ.get('DATABASE_URL') or AIVEN_DATABASE_URL
+    if url.startswith('mysql://'):
+        url = url.replace('mysql://', 'mysql+pymysql://', 1)
+    if not url.startswith('mysql+pymysql://'):
+        raise RuntimeError('DATABASE_URL must use MySQL via mysql+pymysql://')
+    return url
+
 # ============================================================
 # CONFIGURAÇÕES DA APLICAÇÃO
 # ============================================================
@@ -25,12 +40,14 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
     # Base de dados
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'mysql+pymysql://root:Palavrasonnel04%23@localhost/dois_lados?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI = database_url()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_recycle': 280,
-        'pool_pre_ping': True
+        'pool_pre_ping': True,
+        'connect_args': {
+            'ssl': {'check_hostname': False},
+        },
     }
     
     # Sessões (server-side para maior segurança)
@@ -47,7 +64,8 @@ class Config:
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or 'noreply@doislados.co.ao'
     
     # Email do administrador
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or 'nelsonbambi177@gmail.com'
+    SUBMISSION_EMAIL = os.environ.get('SUBMISSION_EMAIL') or 'doislados08@gmail.com'
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or SUBMISSION_EMAIL
     
     # Upload
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max

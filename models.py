@@ -73,6 +73,7 @@ class Project(db.Model):
     # Relacionamentos
     phases = db.relationship('ProjectPhase', backref='project', lazy='dynamic', cascade='all, delete-orphan')
     images = db.relationship('ProjectImage', backref='project', lazy='dynamic', cascade='all, delete-orphan')
+    documents = db.relationship('ProjectDocument', backref='project', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Project {self.title}>'
@@ -115,6 +116,30 @@ class ProjectImage(db.Model):
 
     def __repr__(self):
         return f'<ProjectImage {self.id}>'
+
+
+class ProjectDocument(db.Model):
+    """
+    Documentos operacionais de cada obra.
+    Suporta plantas, propostas, faturas, orcamentos e outros ficheiros internos.
+    """
+    __tablename__ = 'project_documents'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id', ondelete='CASCADE'), nullable=False)
+    document_type = db.Column(db.String(30), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    file_url = db.Column(db.String(500), nullable=False)
+    file_name = db.Column(db.String(255), nullable=False)
+    mime_type = db.Column(db.String(120), nullable=True)
+    amount = db.Column(db.Numeric(12, 2), nullable=True)
+    status = db.Column(db.String(30), default='rascunho', nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ProjectDocument {self.title}>'
 
 
 class Quote(db.Model):

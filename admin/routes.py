@@ -57,11 +57,12 @@ ESTRUTURA DAS ROTAS:
 from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
-from models import db, User, Project, ProjectPhase, Quote, Message as ContactMessage, PortfolioItem, Publication
+from models import db, User, Project, ProjectPhase, ProjectImage, ProjectDocument, Quote, Message as ContactMessage, PortfolioItem, Publication, Newsletter
 from functools import wraps
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from threading import Thread
+from html import escape
 import os
 import traceback
 import uuid
@@ -73,6 +74,8 @@ PUBLICATION_CATEGORIES = {'noticia', 'atividade', 'evento', 'publicidade', 'obra
 MESSAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'dwg', 'txt'}
 APPLICATION_UPLOAD_EXTENSIONS = {'pdf', 'doc', 'docx'}
 IMAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+PROJECT_DOCUMENT_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx', 'dwg', 'dxf', 'png', 'jpg', 'jpeg', 'webp', 'txt'}
+PROJECT_DOCUMENT_TYPES = {'planta', 'proposta', 'fatura', 'orcamento', 'contrato', 'relatorio', 'outro'}
 
 
 def send_mail_async(app, mail, msg):
@@ -81,6 +84,58 @@ def send_mail_async(app, mail, msg):
             mail.send(msg)
         except Exception as mail_error:
             app.logger.error(f'Erro ao enviar email: {str(mail_error)}')
+
+
+def notify_submission(form_name, fields, reply_to=None, attachments=None):
+    """Send a standardized email for any site submission."""
+    mail = current_app.extensions.get('mail')
+    if not mail:
+        current_app.logger.warning(f'Email indisponivel para submissao: {form_name}')
+        return False
+
+    recipient = current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')
+    subject = f'[Dois Lados] Nova submissao: {form_name}'
+    lines = [f'Nova submissao recebida no site Dois Lados: {form_name}', '']
+    rows = []
+
+    for label, value in fields:
+        clean_label = str(label)
+        clean_value = '' if value is None else str(value)
+        lines.append(f'{clean_label}: {clean_value or "N/A"}')
+        rows.append(
+            '<tr>'
+            f'<td style="padding: 9px; color: #6B7280; border-bottom: 1px solid #E5E7EB;">{escape(clean_label)}</td>'
+            f'<td style="padding: 9px; border-bottom: 1px solid #E5E7EB;">{escape(clean_value) or "N/A"}</td>'
+            '</tr>'
+        )
+
+    msg = Message(subject=subject, recipients=[recipient], reply_to=reply_to)
+    msg.body = '\n'.join(lines)
+    msg.html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; color: #111827;">
+      <div style="background: #FACC15; padding: 18px 22px;">
+        <h1 style="margin: 0;">Nova submissao</h1>
+        <p style="margin: 6px 0 0;">{escape(form_name)}</p>
+      </div>
+      <div style="background: #F9FAFB; padding: 24px;">
+        <table style="width: 100%; border-collapse: collapse; background: #FFFFFF;">
+          {''.join(rows)}
+        </table>
+      </div>
+    </div>
+    """
+
+    for attachment in attachments or []:
+        with open(attachment['path'], 'rb') as attachment_file:
+            msg.attach(
+                attachment['name'],
+                attachment.get('mimetype') or 'application/octet-stream',
+                attachment_file.read()
+            )
+
+    app = current_app._get_current_object()
+    Thread(target=send_mail_async, args=(app, mail, msg), daemon=True).start()
+    return True
 
 
 def save_message_attachment(file_storage):
@@ -135,6 +190,23 @@ def save_publication_image(file_storage):
     return f"/static/uploads/publications/{stored_name}"
 
 
+def save_project_upload(file_storage, folder, allowed_extensions):
+    if not file_storage or not file_storage.filename:
+        raise ValueError('Ficheiro obrigatorio')
+
+    filename = secure_filename(file_storage.filename)
+    extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+    if extension not in allowed_extensions:
+        raise ValueError('Tipo de ficheiro nao permitido')
+
+    upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'projects', folder)
+    os.makedirs(upload_dir, exist_ok=True)
+    stored_name = f"{uuid.uuid4().hex}_{filename}"
+    file_storage.save(os.path.join(upload_dir, stored_name))
+
+    return f"/static/uploads/projects/{folder}/{stored_name}", filename, file_storage.mimetype
+
+
 def serialize_message(item):
     return {
         'id': item.id,
@@ -151,6 +223,75 @@ def serialize_message(item):
         'is_read': item.is_read,
         'is_replied': item.is_replied,
         'created_at': item.created_at.isoformat()
+    }
+
+
+def serialize_project(project, include_phases=False):
+    data = {
+        'id': project.id,
+        'title': project.title,
+        'description': project.description,
+        'category': project.category,
+        'status': project.status,
+        'client_id': project.client_id,
+        'client_name': project.client.username if project.client else None,
+        'client_email': project.client.email if project.client else None,
+        'budget': float(project.budget) if project.budget else None,
+        'location': project.location,
+        'area_sqm': float(project.area_sqm) if project.area_sqm else None,
+        'start_date': project.start_date.isoformat() if project.start_date else None,
+        'end_date': project.end_date.isoformat() if project.end_date else None,
+        'created_at': project.created_at.isoformat(),
+        'updated_at': project.updated_at.isoformat() if project.updated_at else None,
+        'phases_count': project.phases.count(),
+        'documents_count': project.documents.count(),
+        'images_count': project.images.count()
+    }
+
+    if include_phases:
+        phases = project.phases.order_by(ProjectPhase.phase_order).all()
+        data['phases'] = [serialize_project_phase(phase) for phase in phases]
+
+    return data
+
+
+def serialize_project_phase(phase):
+    return {
+        'id': phase.id,
+        'phase_name': phase.phase_name,
+        'description': phase.description,
+        'phase_order': phase.phase_order,
+        'start_date': phase.start_date.isoformat() if phase.start_date else None,
+        'end_date': phase.end_date.isoformat() if phase.end_date else None,
+        'status': phase.status
+    }
+
+
+def serialize_project_document(document):
+    return {
+        'id': document.id,
+        'project_id': document.project_id,
+        'document_type': document.document_type,
+        'title': document.title,
+        'description': document.description,
+        'file_url': document.file_url,
+        'file_name': document.file_name,
+        'mime_type': document.mime_type,
+        'amount': float(document.amount) if document.amount else None,
+        'status': document.status,
+        'created_at': document.created_at.isoformat(),
+        'updated_at': document.updated_at.isoformat() if document.updated_at else None
+    }
+
+
+def serialize_project_image(image):
+    return {
+        'id': image.id,
+        'project_id': image.project_id,
+        'image_url': image.image_url,
+        'caption': image.caption,
+        'is_main': image.is_main,
+        'created_at': image.created_at.isoformat()
     }
 
 
@@ -335,6 +476,12 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user, remember=True)
+        notify_submission('Registo de utilizador', [
+            ('Nome de utilizador', new_user.username),
+            ('Email', new_user.email),
+            ('Tipo', 'Cliente'),
+            ('Data', new_user.created_at.strftime('%d/%m/%Y %H:%M') if new_user.created_at else ''),
+        ], reply_to=new_user.email)
         
         return jsonify({
             'success': True,
@@ -472,6 +619,13 @@ def create_client_message():
         )
         db.session.add(message)
         db.session.commit()
+        notify_submission('Mensagem do cliente', [
+            ('Cliente', current_user.username),
+            ('Email', current_user.email),
+            ('Assunto', subject),
+            ('Mensagem', content),
+            ('Anexo', attachment_name or 'Sem anexo'),
+        ], reply_to=current_user.email)
 
         return jsonify({
             'success': True,
@@ -629,7 +783,7 @@ def submit_quote():
             if mail:
                 msg = Message(
                     subject=f'📩 Novo Orçamento: {quote.service_type} - {quote.client_name}',
-                    recipients=[current_app.config.get('ADMIN_EMAIL', 'nelsonbambi177@gmail.com')],
+                    recipients=[current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')],
                     html=f"""
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                         <div style="background: #FACC15; padding: 20px; text-align: center;">
@@ -814,22 +968,7 @@ def get_projects():
         
         return jsonify({
             'success': True,
-            'projects': [{
-                'id': p.id,
-                'title': p.title,
-                'description': p.description,
-                'category': p.category,
-                'status': p.status,
-                'client_id': p.client_id,
-                'client_name': p.client.username if p.client else None,
-                'budget': float(p.budget) if p.budget else None,
-                'location': p.location,
-                'area_sqm': float(p.area_sqm) if p.area_sqm else None,
-                'start_date': p.start_date.isoformat() if p.start_date else None,
-                'end_date': p.end_date.isoformat() if p.end_date else None,
-                'created_at': p.created_at.isoformat(),
-                'phases_count': p.phases.count()
-            } for p in projects]
+            'projects': [serialize_project(p) for p in projects]
         }), 200
         
     except Exception as e:
@@ -879,10 +1018,7 @@ def create_project():
         return jsonify({
             'success': True,
             'message': 'Projeto criado com sucesso!',
-            'project': {
-                'id': project.id,
-                'title': project.title
-            }
+            'project': serialize_project(project)
         }), 201
         
     except Exception as e:
@@ -903,34 +1039,10 @@ def get_project(project_id):
     """
     try:
         project = Project.query.get_or_404(project_id)
-        phases = project.phases.order_by(ProjectPhase.phase_order).all()
         
         return jsonify({
             'success': True,
-            'project': {
-                'id': project.id,
-                'title': project.title,
-                'description': project.description,
-                'category': project.category,
-                'status': project.status,
-                'client_id': project.client_id,
-                'client_name': project.client.username if project.client else None,
-                'budget': float(project.budget) if project.budget else None,
-                'location': project.location,
-                'area_sqm': float(project.area_sqm) if project.area_sqm else None,
-                'start_date': project.start_date.isoformat() if project.start_date else None,
-                'end_date': project.end_date.isoformat() if project.end_date else None,
-                'created_at': project.created_at.isoformat(),
-                'phases': [{
-                    'id': ph.id,
-                    'phase_name': ph.phase_name,
-                    'description': ph.description,
-                    'phase_order': ph.phase_order,
-                    'start_date': ph.start_date.isoformat() if ph.start_date else None,
-                    'end_date': ph.end_date.isoformat() if ph.end_date else None,
-                    'status': ph.status
-                } for ph in phases]
-            }
+            'project': serialize_project(project, include_phases=True)
         }), 200
         
     except Exception as e:
@@ -1039,15 +1151,7 @@ def get_phases(project_id):
         
         return jsonify({
             'success': True,
-            'phases': [{
-                'id': ph.id,
-                'phase_name': ph.phase_name,
-                'description': ph.description,
-                'phase_order': ph.phase_order,
-                'start_date': ph.start_date.isoformat() if ph.start_date else None,
-                'end_date': ph.end_date.isoformat() if ph.end_date else None,
-                'status': ph.status
-            } for ph in phases]
+            'phases': [serialize_project_phase(ph) for ph in phases]
         }), 200
         
     except Exception as e:
@@ -1190,6 +1294,203 @@ def delete_phase(phase_id):
 # ============================================
 # 6. GESTÃO DE ORÇAMENTOS
 # ============================================
+
+# ============================================
+# DOCUMENTOS E IMAGENS DE OBRA
+# ============================================
+
+@api.route('/admin/projects/<int:project_id>/documents', methods=['GET'])
+@admin_required
+def get_project_documents(project_id):
+    """Listar documentos de uma obra"""
+    try:
+        Project.query.get_or_404(project_id)
+        document_type = request.args.get('type')
+        query = ProjectDocument.query.filter_by(project_id=project_id)
+
+        if document_type:
+            query = query.filter_by(document_type=document_type)
+
+        documents = query.order_by(ProjectDocument.created_at.desc()).all()
+        return jsonify({
+            'success': True,
+            'documents': [serialize_project_document(item) for item in documents]
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error(f'Erro ao listar documentos da obra: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao carregar documentos'
+        }), 500
+
+
+@api.route('/admin/projects/<int:project_id>/documents', methods=['POST'])
+@admin_required
+def upload_project_document(project_id):
+    """Adicionar planta, proposta, fatura, orcamento ou outro documento a uma obra"""
+    try:
+        Project.query.get_or_404(project_id)
+        document_type = (request.form.get('document_type') or 'outro').strip()
+
+        if document_type not in PROJECT_DOCUMENT_TYPES:
+            return jsonify({
+                'success': False,
+                'error': 'Tipo de documento invalido'
+            }), 400
+
+        file_url, file_name, mime_type = save_project_upload(
+            request.files.get('file'),
+            'documents',
+            PROJECT_DOCUMENT_EXTENSIONS
+        )
+
+        document = ProjectDocument(
+            project_id=project_id,
+            document_type=document_type,
+            title=(request.form.get('title') or file_name).strip(),
+            description=(request.form.get('description') or '').strip(),
+            file_url=file_url,
+            file_name=file_name,
+            mime_type=mime_type,
+            amount=request.form.get('amount') or None,
+            status=(request.form.get('status') or 'rascunho').strip()
+        )
+
+        db.session.add(document)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Documento adicionado com sucesso!',
+            'document': serialize_project_document(document)
+        }), 201
+
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Erro ao adicionar documento da obra: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao adicionar documento'
+        }), 500
+
+
+@api.route('/admin/project-documents/<int:document_id>', methods=['DELETE'])
+@admin_required
+def delete_project_document(document_id):
+    """Eliminar documento de uma obra"""
+    try:
+        document = ProjectDocument.query.get_or_404(document_id)
+        db.session.delete(document)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Documento eliminado com sucesso!'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Erro ao eliminar documento da obra: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao eliminar documento'
+        }), 500
+
+
+@api.route('/admin/projects/<int:project_id>/images', methods=['GET'])
+@admin_required
+def get_project_images(project_id):
+    """Listar imagens do local de construcao"""
+    try:
+        Project.query.get_or_404(project_id)
+        images = ProjectImage.query.filter_by(project_id=project_id).order_by(ProjectImage.created_at.desc()).all()
+
+        return jsonify({
+            'success': True,
+            'images': [serialize_project_image(item) for item in images]
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error(f'Erro ao listar imagens da obra: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao carregar imagens'
+        }), 500
+
+
+@api.route('/admin/projects/<int:project_id>/images', methods=['POST'])
+@admin_required
+def upload_project_image(project_id):
+    """Adicionar imagem do local de construcao"""
+    try:
+        project = Project.query.get_or_404(project_id)
+        image_url, _, _ = save_project_upload(
+            request.files.get('image'),
+            'images',
+            IMAGE_UPLOAD_EXTENSIONS
+        )
+
+        if request.form.get('is_main') in {'true', '1', 'yes'}:
+            ProjectImage.query.filter_by(project_id=project.id).update({'is_main': False})
+
+        image = ProjectImage(
+            project_id=project_id,
+            image_url=image_url,
+            caption=(request.form.get('caption') or '').strip(),
+            is_main=request.form.get('is_main') in {'true', '1', 'yes'}
+        )
+
+        db.session.add(image)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Imagem adicionada com sucesso!',
+            'image': serialize_project_image(image)
+        }), 201
+
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Erro ao adicionar imagem da obra: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao adicionar imagem'
+        }), 500
+
+
+@api.route('/admin/project-images/<int:image_id>', methods=['DELETE'])
+@admin_required
+def delete_project_image(image_id):
+    """Eliminar imagem do local de construcao"""
+    try:
+        image = ProjectImage.query.get_or_404(image_id)
+        db.session.delete(image)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Imagem eliminada com sucesso!'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Erro ao eliminar imagem da obra: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao eliminar imagem'
+        }), 500
+
 
 @api.route('/admin/quotes', methods=['GET'])
 @admin_required
@@ -1367,6 +1668,14 @@ def create_admin_message():
         )
         db.session.add(message)
         db.session.commit()
+        notify_submission('Mensagem do administrador para cliente', [
+            ('Cliente destinatario', client.username),
+            ('Email do cliente', client.email),
+            ('Admin', current_user.username),
+            ('Assunto', subject),
+            ('Mensagem', content),
+            ('Anexo', attachment_name or 'Sem anexo'),
+        ], reply_to=current_user.email)
 
         return jsonify({
             'success': True,
@@ -1815,6 +2124,13 @@ def create_user_admin():
 
         db.session.add(user)
         db.session.commit()
+        notify_submission('Utilizador criado no painel', [
+            ('Nome de utilizador', user.username),
+            ('Email', user.email),
+            ('Tipo', 'Administrador' if user.is_admin else 'Cliente'),
+            ('Criado por', current_user.email),
+            ('Data', user.created_at.strftime('%d/%m/%Y %H:%M') if user.created_at else ''),
+        ], reply_to=user.email)
 
         return jsonify({
             'success': True,
@@ -2044,7 +2360,7 @@ def submit_job_application():
             }), 503
 
         subject = f'[Nova Candidatura] - {publication_title} - {name}'
-        recipient = current_app.config.get('APPLICATION_EMAIL', 'doislados08@gmail.com')
+        recipient = current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')
         msg = Message(subject=subject, recipients=[recipient])
         msg.body = f"""
 Nova candidatura recebida pelo site Dois Lados.
@@ -2099,6 +2415,45 @@ Mensagem:
         }), 500
 
 
+@api.route('/newsletter', methods=['POST'])
+def subscribe_newsletter():
+    """Registar subscricao da newsletter e notificar por email."""
+    try:
+        data = request.get_json() or {}
+        email = (data.get('email') or '').strip().lower()
+
+        if not email:
+            return jsonify({'success': False, 'error': 'Email e obrigatorio'}), 400
+        if '@' not in email or '.' not in email.split('@')[-1]:
+            return jsonify({'success': False, 'error': 'Email invalido'}), 400
+
+        subscriber = Newsletter.query.filter_by(email=email).first()
+        if subscriber:
+            subscriber.is_active = True
+        else:
+            subscriber = Newsletter(email=email, is_active=True)
+            db.session.add(subscriber)
+
+        db.session.commit()
+        notify_submission('Newsletter', [
+            ('Email', email),
+            ('Estado', 'Subscrito'),
+            ('Data', datetime.utcnow().strftime('%d/%m/%Y %H:%M UTC')),
+        ], reply_to=email)
+
+        return jsonify({
+            'success': True,
+            'message': 'Subscricao efetuada com sucesso!'
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Erro na subscricao da newsletter: {str(e)}')
+        return jsonify({
+            'success': False,
+            'error': 'Erro ao subscrever newsletter'
+        }), 500
+
+
 @api.route('/contact', methods=['POST'])
 def submit_contact():
     """
@@ -2135,7 +2490,7 @@ def submit_contact():
         db.session.commit()
 
         mail = current_app.extensions.get('mail')
-        recipient = current_app.config.get('CONTACT_EMAIL') or current_app.config.get('APPLICATION_EMAIL', 'doislados08@gmail.com')
+        recipient = current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')
         if mail:
             msg = Message(
                 subject=f"Nova mensagem de contacto: {message.subject or 'Sem assunto'}",

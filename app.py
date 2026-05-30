@@ -20,7 +20,6 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import MailConfig, config
 from models import db, User, PortfolioItem, Project, ProjectPhase, Message as ContactMessage, create_admin_user, init_sample_data
-from sqlalchemy import text
 
 # ============================================
 # INSTANCIAÇÃO DE EXTENSIONS
@@ -164,11 +163,14 @@ def create_app(config_name=None):
                     'portfolio': 'GET /api/portfolio',
                     'projects': 'GET /api/projects/public',
                     'quote': 'POST /api/quotes',
-                    'contact': 'POST /api/contact'
+                    'contact': 'POST /api/contact',
+                    'newsletter': 'POST /api/newsletter'
                 },
                 'admin': {
                     'dashboard': 'GET /api/admin/dashboard',
                     'projects': 'GET/POST /api/admin/projects',
+                    'project_documents': 'GET/POST /api/admin/projects/<id>/documents',
+                    'project_images': 'GET/POST /api/admin/projects/<id>/images',
                     'quotes': 'GET /api/admin/quotes',
                     'messages': 'GET /api/admin/messages',
                     'portfolio': 'GET/POST /api/admin/portfolio',
@@ -212,6 +214,13 @@ def create_app(config_name=None):
         db.session.add(user)
         db.session.commit()
         login_user(user, remember=True)
+        from admin.routes import notify_submission
+        notify_submission('Registo de utilizador', [
+            ('Nome de utilizador', user.username),
+            ('Email', user.email),
+            ('Tipo', 'Cliente'),
+            ('Data', user.created_at.strftime('%d/%m/%Y %H:%M') if user.created_at else ''),
+        ], reply_to=user.email)
         return jsonify({'success': True, 'user': {'id': user.id, 'username': user.username, 'email': user.email, 'is_admin': user.is_admin}}), 201
 
     @app.route('/api/login', methods=['POST'])
@@ -264,6 +273,13 @@ def create_app(config_name=None):
         db.session.add(user)
         db.session.commit()
         login_user(user, remember=True)
+        from admin.routes import notify_submission
+        notify_submission('Registo de utilizador', [
+            ('Nome de utilizador', user.username),
+            ('Email', user.email),
+            ('Tipo', 'Cliente'),
+            ('Data', user.created_at.strftime('%d/%m/%Y %H:%M') if user.created_at else ''),
+        ], reply_to=user.email)
         return jsonify({'success': True, 'user': {'id': user.id, 'email': user.email}}), 201
 
     # ============================================
@@ -351,7 +367,6 @@ def create_app(config_name=None):
     with app.app_context():
         # Criar tabelas
         db.create_all()
-        ensure_message_columns()
         
         # Criar admin padrão
         create_admin_user()
@@ -360,27 +375,6 @@ def create_app(config_name=None):
         # init_sample_data()
     
     return app
-
-
-def ensure_message_columns():
-    """Adiciona colunas novas em SQLite sem recriar a base local."""
-    if db.engine.dialect.name != 'sqlite':
-        return
-
-    columns = {
-        row[1]
-        for row in db.session.execute(text("PRAGMA table_info(messages)")).fetchall()
-    }
-    migrations = {
-        'sender_role': "ALTER TABLE messages ADD COLUMN sender_role VARCHAR(20) NOT NULL DEFAULT 'client'",
-        'attachment_url': "ALTER TABLE messages ADD COLUMN attachment_url VARCHAR(500)",
-        'attachment_name': "ALTER TABLE messages ADD COLUMN attachment_name VARCHAR(255)",
-        'attachment_type': "ALTER TABLE messages ADD COLUMN attachment_type VARCHAR(80)",
-    }
-    for column, ddl in migrations.items():
-        if column not in columns:
-            db.session.execute(text(ddl))
-    db.session.commit()
 
 
 # ============================================

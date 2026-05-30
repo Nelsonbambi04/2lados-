@@ -7,17 +7,41 @@ import os
 from datetime import timedelta
 
 
+AIVEN_DATABASE_URL = (
+    'mysql+pymysql://avnadmin:AVNS_eQhiBribmrQySa_9shY@'
+    'mysql-25d29d17-doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4'
+)
+
+
+def database_url():
+    """Return the MySQL database URL. SQLite fallback was intentionally removed."""
+    url = os.environ.get('DATABASE_URL') or AIVEN_DATABASE_URL
+    if url.startswith('mysql://'):
+        url = url.replace('mysql://', 'mysql+pymysql://', 1)
+    if not url.startswith('mysql+pymysql://'):
+        raise RuntimeError('DATABASE_URL must use MySQL via mysql+pymysql://')
+    return url
+
+
+MYSQL_ENGINE_OPTIONS = {
+    'pool_recycle': 280,
+    'pool_pre_ping': True,
+    'connect_args': {
+        'ssl': {'check_hostname': False},
+    },
+}
+
+
 class Config:
     """Configuração base da aplicação"""
     
     # Segurança
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production-doislados-2024'
     
-    # Base de Dados SQLite por defeito
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database', 'dois_lados.db')
+    # Base de Dados MySQL Aiven. Nao ha fallback para SQLite.
+    SQLALCHEMY_DATABASE_URI = database_url()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {}
+    SQLALCHEMY_ENGINE_OPTIONS = MYSQL_ENGINE_OPTIONS
     
     # Sessões
     SESSION_TYPE = 'filesystem'
@@ -47,7 +71,6 @@ class DevelopmentConfig(Config):
     """Configuração para desenvolvimento"""
     DEBUG = True
     SQLALCHEMY_ECHO = False  # True para ver SQL no terminal
-    SQLALCHEMY_ENGINE_OPTIONS = {}
     SESSION_COOKIE_SECURE = False
     SESSION_COOKIE_SAMESITE = 'Lax'
     REMEMBER_COOKIE_SECURE = False
@@ -68,8 +91,6 @@ class ProductionConfig(Config):
 class TestingConfig(Config):
     """Configuração para testes"""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    SQLALCHEMY_ENGINE_OPTIONS = {}
     WTF_CSRF_ENABLED = False
 
 
@@ -98,9 +119,10 @@ class MailConfig:
     )
     
     # Admin destinatário
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or 'doislados08@gmail.com'
-    APPLICATION_EMAIL = os.environ.get('APPLICATION_EMAIL') or 'doislados08@gmail.com'
-    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL') or 'doislados08@gmail.com'
+    SUBMISSION_EMAIL = os.environ.get('SUBMISSION_EMAIL') or 'doislados08@gmail.com'
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or SUBMISSION_EMAIL
+    APPLICATION_EMAIL = os.environ.get('APPLICATION_EMAIL') or SUBMISSION_EMAIL
+    CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL') or SUBMISSION_EMAIL
 
 
 # Combinar configurações

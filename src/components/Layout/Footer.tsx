@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Clock, ArrowRight } from 'lucide-react';
 import { contactInfo, navLinks } from '../../data/mockData';
 import logo from '../../assets/dois-lados-logo.png';
+import { FormEvent, useState } from 'react';
+import { subscribeNewsletter } from '../../services/api';
 
 // ============================================
 // FOOTER COMPONENT - Rodapé do Site
@@ -10,6 +12,27 @@ import logo from '../../assets/dois-lados-logo.png';
 
 export default function Footer() {
   const currentYear = 2023;
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState('');
+  const [newsletterError, setNewsletterError] = useState('');
+  const [newsletterBusy, setNewsletterBusy] = useState(false);
+
+  async function handleNewsletterSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNewsletterStatus('');
+    setNewsletterError('');
+    setNewsletterBusy(true);
+
+    try {
+      const res = await subscribeNewsletter(newsletterEmail);
+      setNewsletterStatus(res.message || 'Subscricao efetuada com sucesso.');
+      setNewsletterEmail('');
+    } catch (error: any) {
+      setNewsletterError(error.message || 'Nao foi possivel subscrever.');
+    } finally {
+      setNewsletterBusy(false);
+    }
+  }
 
   return (
     <footer className="bg-slate-900 text-white">
@@ -171,18 +194,29 @@ export default function Footer() {
               <h4 className="font-semibold text-white mb-1">Newsletter</h4>
               <p className="text-slate-400 text-sm">Receba novidades e projetos em destaque.</p>
             </div>
-            <form className="flex w-full flex-col gap-3 sm:flex-row md:w-auto" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="seu@email.com"
-                className="flex-1 md:w-64 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
-              />
-              <button
-                type="submit"
-                className="rounded-xl bg-yellow-400 px-6 py-3 font-semibold text-slate-900 transition-colors hover:bg-yellow-500 sm:whitespace-nowrap"
-              >
-                Subscrever
-              </button>
+            <form className="flex w-full flex-col gap-3 md:w-auto" onSubmit={handleNewsletterSubmit}>
+              <div className="flex w-full flex-col gap-3 sm:flex-row">
+                <input
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={(event) => setNewsletterEmail(event.target.value)}
+                  placeholder="seu@email.com"
+                  required
+                  className="flex-1 md:w-64 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
+                />
+                <button
+                  type="submit"
+                  disabled={newsletterBusy}
+                  className="rounded-xl bg-yellow-400 px-6 py-3 font-semibold text-slate-900 transition-colors hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60 sm:whitespace-nowrap"
+                >
+                  {newsletterBusy ? 'A enviar...' : 'Subscrever'}
+                </button>
+              </div>
+              {(newsletterStatus || newsletterError) && (
+                <p className={`text-sm ${newsletterError ? 'text-red-300' : 'text-green-300'}`}>
+                  {newsletterError || newsletterStatus}
+                </p>
+              )}
             </form>
           </div>
         </div>

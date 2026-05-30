@@ -110,12 +110,16 @@ FLASK_APP=app.py
 FLASK_ENV=development
 SECRET_KEY=sua-chave-secreta-min-32-caracteres
 
-DATABASE_URL=mysql+pymysql://root:sua_password@localhost:3306/dois_lados?charset=utf8mb4
+DATABASE_URL=mysql+pymysql://avnadmin:SUA_PASSWORD_AIVEN@mysql-25d29d17-doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4
 
 # Gmail App Password (ver secção Configuração de E-mail)
-MAIL_USERNAME=nelsonbambi177@gmail.com
+MAIL_USERNAME=doislados08@gmail.com
 MAIL_PASSWORD=sua-app-password-do-gmail
-ADMIN_EMAIL=nelsonbambi177@gmail.com
+MAIL_DEFAULT_SENDER=doislados08@gmail.com
+SUBMISSION_EMAIL=doislados08@gmail.com
+ADMIN_EMAIL=doislados08@gmail.com
+APPLICATION_EMAIL=doislados08@gmail.com
+CONTACT_EMAIL=doislados08@gmail.com
 ```
 
 ### 7. Executar Schema SQL
@@ -342,7 +346,7 @@ export const api = {
 
 **Dois Lados - Arquitetura e Construção**
 - 📍 Luanda, Angola
-- 📧 nelsonbambi177@gmail.com
+- 📧 doislados08@gmail.com
 - 📱 +244 XXX XXX XXX
 
 ---
