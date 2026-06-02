@@ -13,6 +13,7 @@ from flask_cors import CORS
 from flask_session import Session
 from datetime import datetime
 import os
+from urllib.parse import quote_plus
 
 AIVEN_DATABASE_URL = (
     'mysql+pymysql://avnadmin:AVNS_eQhiBribmrQySa_9shY@'
@@ -21,7 +22,27 @@ AIVEN_DATABASE_URL = (
 
 
 def database_url():
-    """Return the MySQL database URL. SQLite/local fallbacks were intentionally removed."""
+    """Return the MySQL database URL using pymysql and Aiven-ready settings."""
+    mysql_vars = {
+        'MYSQL_USER': os.environ.get('MYSQL_USER'),
+        'MYSQL_PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        'MYSQL_HOST': os.environ.get('MYSQL_HOST'),
+        'MYSQL_PORT': os.environ.get('MYSQL_PORT'),
+        'MYSQL_DB': os.environ.get('MYSQL_DB'),
+    }
+
+    if all(mysql_vars.values()):
+        user = quote_plus(mysql_vars['MYSQL_USER'])
+        password = quote_plus(mysql_vars['MYSQL_PASSWORD'])
+        host = mysql_vars['MYSQL_HOST']
+        port = mysql_vars['MYSQL_PORT']
+        database = quote_plus(mysql_vars['MYSQL_DB'])
+        return f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}?charset=utf8mb4'
+
+    if any(mysql_vars.values()):
+        missing = ', '.join(name for name, value in mysql_vars.items() if not value)
+        raise RuntimeError(f'Missing MySQL environment variables: {missing}')
+
     url = os.environ.get('DATABASE_URL') or AIVEN_DATABASE_URL
     if url.startswith('mysql://'):
         url = url.replace('mysql://', 'mysql+pymysql://', 1)
@@ -46,7 +67,7 @@ class Config:
         'pool_recycle': 280,
         'pool_pre_ping': True,
         'connect_args': {
-            'ssl': {'check_hostname': False},
+            'ssl': {},
         },
     }
     
