@@ -113,13 +113,13 @@ SECRET_KEY=sua-chave-secreta-min-32-caracteres
 DATABASE_URL=mysql+pymysql://avnadmin:SUA_PASSWORD_AIVEN@mysql-25d29d17-doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4
 
 # Gmail App Password (ver secção Configuração de E-mail)
-MAIL_USERNAME=doislados08@gmail.com
+MAIL_USERNAME=geral@doislados.ao
 MAIL_PASSWORD=sua-app-password-do-gmail
-MAIL_DEFAULT_SENDER=doislados08@gmail.com
-SUBMISSION_EMAIL=doislados08@gmail.com
-ADMIN_EMAIL=doislados08@gmail.com
-APPLICATION_EMAIL=doislados08@gmail.com
-CONTACT_EMAIL=doislados08@gmail.com
+MAIL_DEFAULT_SENDER=geral@doislados.ao
+SUBMISSION_EMAIL=geral@doislados.ao
+ADMIN_EMAIL=geral@doislados.ao
+APPLICATION_EMAIL=geral@doislados.ao
+CONTACT_EMAIL=geral@doislados.ao
 ```
 
 ### 7. Executar Schema SQL
@@ -346,7 +346,7 @@ export const api = {
 
 **Dois Lados - Arquitetura e Construção**
 - 📍 Luanda, Angola
-- 📧 doislados08@gmail.com
+- 📧 geral@doislados.ao
 - 📱 +244 XXX XXX XXX
 
 ---

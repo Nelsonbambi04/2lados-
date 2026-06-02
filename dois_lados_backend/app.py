@@ -64,7 +64,7 @@ class Config:
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or 'noreply@doislados.co.ao'
     
     # Email do administrador
-    SUBMISSION_EMAIL = os.environ.get('SUBMISSION_EMAIL') or 'doislados08@gmail.com'
+    SUBMISSION_EMAIL = os.environ.get('SUBMISSION_EMAIL') or 'geral@doislados.ao'
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or SUBMISSION_EMAIL
     
     # Upload

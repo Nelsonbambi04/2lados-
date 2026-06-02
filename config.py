@@ -115,11 +115,11 @@ class MailConfig:
     # Remetente
     MAIL_DEFAULT_SENDER = (
         'Dois Lados - Arquitetura',
-        os.environ.get('MAIL_DEFAULT_SENDER') or os.environ.get('MAIL_USERNAME') or 'doislados08@gmail.com'
+        os.environ.get('MAIL_DEFAULT_SENDER') or os.environ.get('MAIL_USERNAME') or 'geral@doislados.ao'
     )
     
     # Admin destinatário
-    SUBMISSION_EMAIL = os.environ.get('SUBMISSION_EMAIL') or 'doislados08@gmail.com'
+    SUBMISSION_EMAIL = os.environ.get('SUBMISSION_EMAIL') or 'geral@doislados.ao'
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL') or SUBMISSION_EMAIL
     APPLICATION_EMAIL = os.environ.get('APPLICATION_EMAIL') or SUBMISSION_EMAIL
     CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL') or SUBMISSION_EMAIL

@@ -165,10 +165,10 @@ MAIL_PORT=587
 MAIL_USE_TLS=true
 MAIL_USERNAME=seu_email@gmail.com
 MAIL_PASSWORD=sua_app_password
-SUBMISSION_EMAIL=doislados08@gmail.com
-ADMIN_EMAIL=doislados08@gmail.com
-APPLICATION_EMAIL=doislados08@gmail.com
-CONTACT_EMAIL=doislados08@gmail.com
+SUBMISSION_EMAIL=geral@doislados.ao
+ADMIN_EMAIL=geral@doislados.ao
+APPLICATION_EMAIL=geral@doislados.ao
+CONTACT_EMAIL=geral@doislados.ao
 ```
 
 ---
@@ -386,7 +386,7 @@ mysql -u root -p -e "SELECT 1"
 ## 📞 Suporte
 
 Para dúvidas ou problemas:
-- Email: doislados08@gmail.com
+- Email: geral@doislados.ao
 - Projeto: Dois Lados - Arquitetura & Construção
 
 ---

@@ -93,7 +93,7 @@ def notify_submission(form_name, fields, reply_to=None, attachments=None):
         current_app.logger.warning(f'Email indisponivel para submissao: {form_name}')
         return False
 
-    recipient = current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')
+    recipient = current_app.config.get('SUBMISSION_EMAIL', 'geral@doislados.ao')
     subject = f'[Dois Lados] Nova submissao: {form_name}'
     lines = [f'Nova submissao recebida no site Dois Lados: {form_name}', '']
     rows = []
@@ -783,7 +783,7 @@ def submit_quote():
             if mail:
                 msg = Message(
                     subject=f'📩 Novo Orçamento: {quote.service_type} - {quote.client_name}',
-                    recipients=[current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')],
+                    recipients=[current_app.config.get('SUBMISSION_EMAIL', 'geral@doislados.ao')],
                     html=f"""
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                         <div style="background: #FACC15; padding: 20px; text-align: center;">
@@ -2360,7 +2360,7 @@ def submit_job_application():
             }), 503
 
         subject = f'[Nova Candidatura] - {publication_title} - {name}'
-        recipient = current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')
+        recipient = current_app.config.get('SUBMISSION_EMAIL', 'geral@doislados.ao')
         msg = Message(subject=subject, recipients=[recipient])
         msg.body = f"""
 Nova candidatura recebida pelo site Dois Lados.
@@ -2490,7 +2490,7 @@ def submit_contact():
         db.session.commit()
 
         mail = current_app.extensions.get('mail')
-        recipient = current_app.config.get('SUBMISSION_EMAIL', 'doislados08@gmail.com')
+        recipient = current_app.config.get('SUBMISSION_EMAIL', 'geral@doislados.ao')
         if mail:
             msg = Message(
                 subject=f"Nova mensagem de contacto: {message.subject or 'Sem assunto'}",

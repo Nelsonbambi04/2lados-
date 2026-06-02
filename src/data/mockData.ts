@@ -217,7 +217,7 @@ export const clientProjects: ClientProject[] = [
 export const contactInfo = {
   address: 'Ngola Kiluanje\nLuanda, Angola',
   phone: '+244 928 035 347',
-  email: 'doislados08@gmail.com',
+  email: 'geral@doislados.ao',
   workingHours: 'Segunda a Sexta: 8h00 - 18h00\nSábado: 9h00 - 13h00',
   coordinates: { lat: -8.8383, lng: 13.2344 }
 };
