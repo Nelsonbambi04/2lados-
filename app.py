@@ -85,22 +85,20 @@ def create_app(config_name=None):
     # CORS (permite requests do frontend e mantém cookies de sessão)
     cors_origins = [
         origin.strip()
-        for origin in os.environ.get('CORS_ORIGINS', '').split(',')
+        for origin in os.environ.get('CORS_ORIGINS', '*').split(',')
         if origin.strip()
-    ] + [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5000",
-        "http://127.0.0.1:5000",
-        r"https://.*\.vercel\.app",
     ]
 
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": cors_origins,
-            "supports_credentials": True
-        }
-    })
+    CORS(
+        app,
+        origins=cors_origins,
+        supports_credentials=True,
+        resources={
+            r"/api/*": {"origins": cors_origins},
+            r"/health": {"origins": cors_origins},
+            r"/static/uploads/*": {"origins": cors_origins},
+        },
+    )
     
     # ============================================
     # USER LOADER PARA FLASK-LOGIN

@@ -104,7 +104,7 @@ export default function ClientArea() {
       navigate(data.user.is_admin ? "/admin" : "/cliente/dashboard");
     } catch (err) {
       setError(
-        "Erro de ligação ao servidor. Confirme se o backend está a correr em http://127.0.0.1:5000.",
+        "Nao foi possivel ligar ao servidor. Verifique se a API da Render esta online.",
       );
     } finally {
       setIsLoading(false);

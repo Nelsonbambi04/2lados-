@@ -166,8 +166,10 @@ export interface ClientProfile {
   }>;
 }
 
-export const API_BASE = (import.meta.env.VITE_API_URL || 'https://twolados.onrender.com/api').replace(/\/+$/, '');
-export const ASSET_BASE = API_BASE.replace(/\/api$/, '');
+const rawApiUrl = (import.meta.env.VITE_API_URL || 'https://twolados.onrender.com').replace(/\/+$/, '');
+
+export const ASSET_BASE = rawApiUrl.replace(/\/api$/, '');
+export const API_BASE = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 export function resolveAssetUrl(url?: string | null, fallback = '') {
   if (!url) return fallback;

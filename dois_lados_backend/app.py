@@ -156,7 +156,21 @@ def create_app(config_name='default'):
     app.mail = mail
     
     # CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    cors_origins = [
+        origin.strip()
+        for origin in os.environ.get('CORS_ORIGINS', '*').split(',')
+        if origin.strip()
+    ]
+    CORS(
+        app,
+        origins=cors_origins,
+        supports_credentials=True,
+        resources={
+            r"/api/*": {"origins": cors_origins},
+            r"/health": {"origins": cors_origins},
+            r"/static/uploads/*": {"origins": cors_origins},
+        },
+    )
     
     # Session
     Session(app)
