@@ -2490,8 +2490,13 @@ def submit_contact():
         db.session.commit()
 
         mail = current_app.extensions.get('mail')
-        recipient = current_app.config.get('SUBMISSION_EMAIL', 'geral@doislados.ao')
+        recipient = current_app.config.get('CONTACT_EMAIL') or current_app.config.get('SUBMISSION_EMAIL') or 'geral@doislados.ao'
         if mail:
+            safe_name = escape(message.name)
+            safe_email = escape(message.email)
+            safe_phone = escape(message.phone or 'Nao informado')
+            safe_subject = escape(message.subject or 'Sem assunto')
+            safe_content = escape(message.content)
             msg = Message(
                 subject=f"Nova mensagem de contacto: {message.subject or 'Sem assunto'}",
                 recipients=[recipient],
@@ -2508,13 +2513,13 @@ def submit_contact():
                 <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6;">
                   <h2 style="margin: 0 0 16px;">Nova mensagem de contacto</h2>
                   <table style="border-collapse: collapse; width: 100%; max-width: 640px;">
-                    <tr><td style="padding: 8px; color: #6B7280;">Nome</td><td style="padding: 8px;">{message.name}</td></tr>
-                    <tr><td style="padding: 8px; color: #6B7280;">Email</td><td style="padding: 8px;"><a href="mailto:{message.email}">{message.email}</a></td></tr>
-                    <tr><td style="padding: 8px; color: #6B7280;">Telefone</td><td style="padding: 8px;">{message.phone or 'Nao informado'}</td></tr>
-                    <tr><td style="padding: 8px; color: #6B7280;">Assunto</td><td style="padding: 8px;">{message.subject or 'Sem assunto'}</td></tr>
+                    <tr><td style="padding: 8px; color: #6B7280;">Nome</td><td style="padding: 8px;">{safe_name}</td></tr>
+                    <tr><td style="padding: 8px; color: #6B7280;">Email</td><td style="padding: 8px;"><a href="mailto:{safe_email}">{safe_email}</a></td></tr>
+                    <tr><td style="padding: 8px; color: #6B7280;">Telefone</td><td style="padding: 8px;">{safe_phone}</td></tr>
+                    <tr><td style="padding: 8px; color: #6B7280;">Assunto</td><td style="padding: 8px;">{safe_subject}</td></tr>
                   </table>
                   <div style="margin-top: 18px; padding: 16px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px;">
-                    {message.content}
+                    {safe_content}
                   </div>
                 </div>
                 """,

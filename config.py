@@ -120,13 +120,13 @@ class TestingConfig(Config):
 # ============================================
 
 class MailConfig:
-    """Configurações de e-mail usando Gmail SMTP"""
+    """Configuracoes de e-mail usando o SMTP do dominio Dois Lados."""
     
     # Servidor SMTP
-    MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('true', 'on', '1')
-    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', 'on', '1')
+    MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'mail.doislados.ao'
+    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 465)
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'False').lower() in ('true', 'on', '1')
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'True').lower() in ('true', 'on', '1')
     
     # Credenciais (NUNCA hardcoded - usar variáveis de ambiente!)
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
