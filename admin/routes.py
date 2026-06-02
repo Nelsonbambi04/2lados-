@@ -2491,41 +2491,64 @@ def submit_contact():
 
         mail = current_app.extensions.get('mail')
         recipient = current_app.config.get('CONTACT_EMAIL') or current_app.config.get('SUBMISSION_EMAIL') or 'geral@doislados.ao'
-        if mail:
-            safe_name = escape(message.name)
-            safe_email = escape(message.email)
-            safe_phone = escape(message.phone or 'Nao informado')
-            safe_subject = escape(message.subject or 'Sem assunto')
-            safe_content = escape(message.content)
-            msg = Message(
-                subject=f"Nova mensagem de contacto: {message.subject or 'Sem assunto'}",
-                recipients=[recipient],
-                reply_to=message.email,
-                body=(
-                    "Nova mensagem recebida pelo site Dois Lados.\n\n"
-                    f"Nome: {message.name}\n"
-                    f"Email: {message.email}\n"
-                    f"Telefone: {message.phone or 'Nao informado'}\n"
-                    f"Assunto: {message.subject or 'Sem assunto'}\n\n"
-                    f"Mensagem:\n{message.content}\n"
-                ),
-                html=f"""
-                <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6;">
-                  <h2 style="margin: 0 0 16px;">Nova mensagem de contacto</h2>
-                  <table style="border-collapse: collapse; width: 100%; max-width: 640px;">
-                    <tr><td style="padding: 8px; color: #6B7280;">Nome</td><td style="padding: 8px;">{safe_name}</td></tr>
-                    <tr><td style="padding: 8px; color: #6B7280;">Email</td><td style="padding: 8px;"><a href="mailto:{safe_email}">{safe_email}</a></td></tr>
-                    <tr><td style="padding: 8px; color: #6B7280;">Telefone</td><td style="padding: 8px;">{safe_phone}</td></tr>
-                    <tr><td style="padding: 8px; color: #6B7280;">Assunto</td><td style="padding: 8px;">{safe_subject}</td></tr>
-                  </table>
-                  <div style="margin-top: 18px; padding: 16px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px;">
-                    {safe_content}
-                  </div>
-                </div>
-                """,
+        if not mail:
+            current_app.logger.error('Servico de email nao inicializado para mensagem de contacto')
+            return jsonify({
+                'success': False,
+                'error': 'Mensagem recebida, mas o servico de email esta indisponivel.'
+            }), 503
+
+        safe_name = escape(message.name)
+        safe_email = escape(message.email)
+        safe_phone = escape(message.phone or 'Nao informado')
+        safe_subject = escape(message.subject or 'Sem assunto')
+        safe_content = escape(message.content)
+        msg = Message(
+            subject=f"Nova mensagem de contacto: {message.subject or 'Sem assunto'}",
+            recipients=[recipient],
+            reply_to=message.email,
+            body=(
+                "Nova mensagem recebida pelo site Dois Lados.\n\n"
+                f"Nome: {message.name}\n"
+                f"Email: {message.email}\n"
+                f"Telefone: {message.phone or 'Nao informado'}\n"
+                f"Assunto: {message.subject or 'Sem assunto'}\n\n"
+                f"Mensagem:\n{message.content}\n"
+            ),
+            html=f"""
+            <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6;">
+              <h2 style="margin: 0 0 16px;">Nova mensagem de contacto</h2>
+              <table style="border-collapse: collapse; width: 100%; max-width: 640px;">
+                <tr><td style="padding: 8px; color: #6B7280;">Nome</td><td style="padding: 8px;">{safe_name}</td></tr>
+                <tr><td style="padding: 8px; color: #6B7280;">Email</td><td style="padding: 8px;"><a href="mailto:{safe_email}">{safe_email}</a></td></tr>
+                <tr><td style="padding: 8px; color: #6B7280;">Telefone</td><td style="padding: 8px;">{safe_phone}</td></tr>
+                <tr><td style="padding: 8px; color: #6B7280;">Assunto</td><td style="padding: 8px;">{safe_subject}</td></tr>
+              </table>
+              <div style="margin-top: 18px; padding: 16px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px;">
+                {safe_content}
+              </div>
+            </div>
+            """,
+        )
+
+        try:
+            mail.send(msg)
+            current_app.logger.info(f'Email de contacto enviado para {recipient}')
+        except Exception as mail_error:
+            current_app.logger.error(
+                'Erro ao enviar email de contacto para %s via %s:%s ssl=%s tls=%s user=%s: %s',
+                recipient,
+                current_app.config.get('MAIL_SERVER'),
+                current_app.config.get('MAIL_PORT'),
+                current_app.config.get('MAIL_USE_SSL'),
+                current_app.config.get('MAIL_USE_TLS'),
+                current_app.config.get('MAIL_USERNAME'),
+                str(mail_error)
             )
-            app = current_app._get_current_object()
-            Thread(target=send_mail_async, args=(app, mail, msg), daemon=True).start()
+            return jsonify({
+                'success': False,
+                'error': 'Mensagem recebida, mas o email nao foi enviado. Verifique as configuracoes SMTP.'
+            }), 502
         
         return jsonify({
             'success': True,
