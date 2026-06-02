@@ -45,19 +45,19 @@ export default function Login() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2.5 mb-6">
-            <img src={logo} alt="Dois Lados" className="h-12 w-auto flex-shrink-0 object-contain" />
-            <span className="font-bold text-xl leading-tight text-slate-900">Dois Lados</span>
+    <main className="min-h-screen bg-slate-50 px-4 py-8">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md flex-col justify-center">
+        <div className="mb-7 text-center">
+          <Link to="/" className="mb-6 inline-flex items-center justify-center gap-2.5">
+            <img src={logo} alt="Dois Lados" className="h-11 w-auto flex-shrink-0 object-contain" />
+            <span className="text-xl font-bold leading-tight text-slate-900">Dois Lados</span>
           </Link>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Área Reservada</h1>
           <p className="text-slate-600">Aceda a sua conta para continuar.</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="rounded-2xl bg-white p-6 shadow-xl shadow-slate-200/80 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
                 Email
@@ -69,7 +69,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com"
                 required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
+                className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-slate-900 placeholder-slate-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-400"
               />
             </div>
 
@@ -85,7 +85,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full px-4 py-3 pr-12 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
+                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 pr-12 text-slate-900 placeholder-slate-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 />
                 <button
                   type="button"
@@ -106,7 +106,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-yellow-400 px-6 font-bold text-slate-900 transition-all hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LogIn className="w-5 h-5" />
               {loading ? "A processar..." : "Entrar"}
@@ -114,8 +114,8 @@ export default function Login() {
           </form>
         </div>
 
-        <div className="text-center mt-6">
-          <p className="text-slate-600 text-sm">
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-600">
             Nao tem conta?{" "}
             <Link to="/register" className="text-yellow-600 font-semibold hover:text-yellow-700">
               Criar conta
