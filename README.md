@@ -141,7 +141,7 @@ python app.py
 🏗️  DOIS LADOS - Sistema de Gestão
 =================================================
 🌐 URL: http://localhost:5000
-👤 Admin: admin@doislados.co.ao / admin123
+👤 
 =================================================
 ```
 
