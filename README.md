@@ -110,7 +110,7 @@ FLASK_APP=app.py
 FLASK_ENV=development
 SECRET_KEY=sua-chave-secreta-min-32-caracteres
 
-DATABASE_URL=mysql+pymysql://avnadmin:SUA_PASSWORD_AIVEN@mysql-25d29d17-doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4
+DATABASE_URL=mysql+pymysql://avmin:SUA_PASSWORD_doislados.l.aivencloud.com:23198/defaultdb?charset=utf8mb4
 
 # Gmail App Password (ver secção Configuração de E-mail)
 MAIL_USERNAME=geral@doislados.ao
