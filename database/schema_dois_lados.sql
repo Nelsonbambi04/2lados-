@@ -216,7 +216,7 @@ ON DUPLICATE KEY UPDATE phase_name=phase_name;
 
 -- Orçamento de exemplo
 INSERT INTO quotes (client_name, client_email, client_phone, service_type, project_type, description, budget_range, location, status)
-VALUES ('Maria dos Santos', 'maria.santos@email.com', '+244 928 035 347', 'Projeto Arquitetônico', 'Residencial', 'Procuro projeto para moradia de 3 quartos em Talatona, com área de aproximadamente 250m2. Pretendo incluir garagem para 2 viaturas e uma piscina pequena.', '50.000 - 100.000 USD', 'Talatona, Luanda', 'pendente')
+VALUES ('Maria dos Santos', 'maria.santos@email.com', '+244 939 876 700', 'Projeto Arquitetônico', 'Residencial', 'Procuro projeto para moradia de 3 quartos em Talatona, com área de aproximadamente 250m2. Pretendo incluir garagem para 2 viaturas e uma piscina pequena.', '50.000 - 100.000 USD', 'Talatona, Luanda', 'pendente')
 ON DUPLICATE KEY UPDATE client_name=client_name;
 
 -- Mensagem de contacto exemplo

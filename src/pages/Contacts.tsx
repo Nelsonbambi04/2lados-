@@ -63,7 +63,7 @@ export default function Contacts() {
         return undefined;
       case 'phone':
         if (!value.trim()) return 'Telefone é obrigatório';
-        if (!isValidPhone(value)) return 'Telefone inválido (ex: +244 928 035 347)';
+        if (!isValidPhone(value)) return 'Telefone inválido (ex: +244 939 876 700)';
         return undefined;
       case 'subject':
         if (!value.trim()) return 'Assunto é obrigatório';
@@ -273,7 +273,7 @@ export default function Contacts() {
                       value={formData.phone}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      placeholder="+244 928 035 347"
+                      placeholder="+244 939 876 700"
                       className={`w-full px-4 py-3 bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
                         errors.phone
                           ? 'border-red-300 focus:ring-red-400'

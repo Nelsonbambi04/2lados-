@@ -1,7 +1,7 @@
 import { FaWhatsapp } from 'react-icons/fa';
 
 const whatsappUrl =
-  'https://wa.me/244954473365?text=Ol%C3%A1%2C%20preciso%20de%20assist%C3%AAncia.';
+  'https://wa.me/244939876700?text=Ol%C3%A1%2C%20preciso%20de%20assist%C3%AAncia.';
 
 export default function FloatingWhatsApp() {
   return (

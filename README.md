@@ -347,7 +347,7 @@ export const api = {
 **Dois Lados - Arquitetura e Construção**
 - 📍 Luanda, Angola
 - 📧 geral@doislados.ao
-- 📱 +244 XXX XXX XXX
+- 📱 +244 939 876 700
 
 ---
 

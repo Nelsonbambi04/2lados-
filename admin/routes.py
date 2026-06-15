@@ -730,7 +730,7 @@ def submit_quote():
     {
         "client_name": "Nome Cliente",
         "client_email": "email@exemplo.com",
-        "client_phone": "+244 XXX XXX XXX",
+        "client_phone": "+244 939 876 700",
         "service_type": "Projeto Arquitetônico",
         "project_type": "Residencial",
         "description": "Descrição do projeto...",

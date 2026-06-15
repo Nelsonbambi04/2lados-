@@ -256,7 +256,7 @@ def https_redirect():
 
 Para dúvidas sobre a estrutura do banco:
 - Email: info@doislados.co.ao
-- Tel: +244 928 035 347
+- Tel: +244 939 876 700
 
 ---
 

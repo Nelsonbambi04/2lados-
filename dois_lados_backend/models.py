@@ -693,7 +693,7 @@ def seed_data():
         username='admin',
         email='admin@doislados.co.ao',
         full_name='Administrador',
-        phone='+244 928 035 347',
+        phone='+244 939 876 700',
         is_admin=True,
         is_active=True
     )
@@ -706,7 +706,7 @@ def seed_data():
         username='joaosilva',
         email='joao.silva@email.com',
         full_name='João Silva',
-        phone='+244 928 035 347',
+        phone='+244 939 876 700',
         is_admin=False,
         is_active=True
     )
@@ -719,7 +719,7 @@ def seed_data():
         user_id=demo_user.id,
         name='João Silva',
         email='joao.silva@email.com',
-        phone='+244 928 035 347',
+        phone='+244 939 876 700',
         nif='1234567890',
         address='Ngola Kiluanje',
         city='Luanda',
