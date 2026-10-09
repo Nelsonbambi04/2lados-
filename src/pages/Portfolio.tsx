@@ -111,11 +111,11 @@ export default function Portfolio() {
                   className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition"
                 >
                   <div className="relative">
-                    <img
-                      src={resolveAssetUrl(project.image_url, "/placeholder.jpg")}
-                      alt={project.title}
-                      className="h-56 w-full bg-slate-100 object-contain"
-                    />
+                    {project.image_url ? (
+                      <img src={resolveAssetUrl(project.image_url)} alt={project.title} className="h-56 w-full bg-slate-100 object-cover" />
+                    ) : (
+                      <div className="flex h-56 items-center justify-center bg-slate-100 text-sm text-slate-500">Fotografia em preparação</div>
+                    )}
                     <span className="absolute top-4 left-4 px-3 py-1 bg-yellow-400 text-slate-900 text-xs font-bold rounded-full">
                       {project.category?.toUpperCase()}
                     </span>

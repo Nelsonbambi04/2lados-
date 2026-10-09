@@ -1,0 +1,12 @@
+COLOQUE AS FOTOGRAFIAS REAIS NESTA PASTA
+
+Use estes nomes para as imagens principais do site:
+- equipa-em-obra.jpg
+- obra-estrutura.jpg
+- fiscalizacao-em-obra.jpg
+- acabamentos-interior.jpg
+- visita-tecnica.jpg
+- equipa-capacetes.jpg
+
+Pode também enviar cada fotografia pela Área de Administração e associá-la
+a uma obra. Essas imagens ficam automaticamente visíveis ao respetivo cliente.
