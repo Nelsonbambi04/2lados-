@@ -19,7 +19,7 @@ from flask_migrate import Migrate
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import MailConfig, config
-from models import db, User, PortfolioItem, Project, ProjectPhase, Message as ContactMessage, create_admin_user, init_sample_data
+from models import db, User, PortfolioItem, Project, ProjectPhase, ProjectDocument, ProjectImage, Message as ContactMessage, create_admin_user, init_sample_data
 
 # ============================================
 # INSTANCIAÇÃO DE EXTENSIONS
@@ -307,6 +307,8 @@ def create_app(config_name=None):
 
         def serialize_project(p: Project):
             phases = ProjectPhase.query.filter_by(project_id=p.id).order_by(ProjectPhase.phase_order).all()
+            documents = ProjectDocument.query.filter_by(project_id=p.id).order_by(ProjectDocument.created_at.desc()).all()
+            images = ProjectImage.query.filter_by(project_id=p.id).order_by(ProjectImage.created_at.desc()).all()
             return {
                 'id': p.id,
                 'title': p.title,
@@ -324,7 +326,21 @@ def create_app(config_name=None):
                     'status': ph.status,
                     'start_date': ph.start_date.isoformat() if ph.start_date else None,
                     'end_date': ph.end_date.isoformat() if ph.end_date else None,
-                } for ph in phases]
+                } for ph in phases],
+                'documents': [{
+                    'id': doc.id,
+                    'title': doc.title,
+                    'file_url': doc.file_url,
+                    'file_name': doc.file_name,
+                    'document_type': doc.document_type,
+                    'created_at': doc.created_at.isoformat() if doc.created_at else None,
+                } for doc in documents],
+                'images': [{
+                    'id': image.id,
+                    'image_url': image.image_url,
+                    'caption': image.caption,
+                    'created_at': image.created_at.isoformat() if image.created_at else None,
+                } for image in images]
             }
 
         return jsonify({

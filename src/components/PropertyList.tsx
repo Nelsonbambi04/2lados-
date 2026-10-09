@@ -39,12 +39,16 @@ export default function PropertyList() {
           key={property.id}
           className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
         >
-          <img
-            src={resolveAssetUrl(property.image || property.image_url, 'https://via.placeholder.com/600x400?text=Im%C3%B3vel')}
-            alt={property.title}
-            className="h-48 w-full bg-slate-100 object-contain"
-            loading="lazy"
-          />
+          {property.image || property.image_url ? (
+            <img
+              src={resolveAssetUrl(property.image || property.image_url)}
+              alt={property.title}
+              className="h-48 w-full bg-slate-100 object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-48 items-center justify-center bg-slate-100 text-sm text-slate-500">Fotografia em preparação</div>
+          )}
           <div className="p-4 space-y-2">
             <h3 className="text-lg font-bold text-slate-900">{property.title}</h3>
             <p className="text-sm text-slate-600">{property.location}</p>

@@ -105,79 +105,72 @@ export const projects: Project[] = [
     id: 'residência-t3-mirante',
     title: 'Residência T3 Mirante',
     category: 'residencial',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
+    image: '/projetos/obra-estrutura.jpg',
     location: 'Luanda, Maianga',
     year: 2024,
     description: 'Moradia unifamiliar T3 com áreas sociais amplas, piscina e jardim paisagístico. Design contemporâneo com materiais locais.',
     images: [
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
-      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800'
+      '/projetos/obra-estrutura.jpg'
     ]
   },
   {
     id: 'edificio-comercial-11-setembro',
     title: 'Edifício Comercial 11 de Setembro',
     category: 'comercial',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800',
+    image: '/projetos/fiscalizacao-em-obra.jpg',
     location: 'Luanda, Centro',
     year: 2023,
     description: 'Edifício de 8 andares com espaços comerciais no rés-do-chão e escritórios nas plantas superiores. Fachada em vidro e betão.',
     images: [
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800',
-      'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800'
+      '/projetos/fiscalizacao-em-obra.jpg'
     ]
   },
   {
     id: 'urbanismo-cacuaco',
     title: 'Projeto Urbano Cacuaco',
     category: 'urbanismo',
-    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800',
+    image: '/projetos/visita-tecnica.jpg',
     location: 'Cacuaco, Luanda',
     year: 2023,
     description: 'Projeto de urbanização para 150 lotes com zonas verdes, equipamentos sociais e infraestrutura moderna.',
     images: [
-      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800',
-      'https://images.unsplash.com/photo-1518308326024-8ea4ac7c5c0a?w=800'
+      '/projetos/visita-tecnica.jpg'
     ]
   },
   {
     id: 'apartamento-t5-talatona',
     title: 'Apartamento T5 Talatona',
     category: 'residencial',
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
+    image: '/projetos/acabamentos-interior.jpg',
     location: 'Talatona, Luanda',
     year: 2024,
     description: 'Apartamento de luxo com vista panorâmica, acabamentos premium e integração de tecnologia smart home.',
     images: [
-      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
-      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800'
+      '/projetos/acabamentos-interior.jpg'
     ]
   },
   {
     id: 'sede-empresa-petroleo',
     title: 'Sede Empresa Petrolífera',
     category: 'comercial',
-    image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800',
+    image: '/projetos/equipa-capacetes.jpg',
     location: 'Luanda, Ingombota',
     year: 2022,
     description: 'Sede corporativa com 12.000m², espaços colaborativos, auditorium e rooftop garden. Certificação LEED白银.',
     images: [
-      'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800',
-      'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800'
+      '/projetos/equipa-capacetes.jpg'
     ]
   },
   {
     id: 'centro-comercial-viana',
     title: 'Centro Comercial Viana',
     category: 'urbanismo',
-    image: 'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800',
+    image: '/projetos/equipa-em-obra.jpg',
     location: 'Viana, Luanda',
     year: 2024,
     description: 'Complexo comercial com 200 lojas, praça de alimentação, cinema e parque de estacionamento para 500 viaturas.',
     images: [
-      'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800',
-      'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800'
+      '/projetos/equipa-em-obra.jpg'
     ]
   }
 ];

@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AlertCircle, Bell, Building2, FileText, LogIn, LogOut, Mail, Send, User } from "lucide-react";
+import { AlertCircle, Bell, Building2, Download, FileText, FolderOpen, Image as ImageIcon, LogIn, LogOut, Mail, Send, User } from "lucide-react";
 import LoadingLogo from "../components/LoadingLogo";
 import { ClientProfile, getClientProfile, request, resolveAssetUrl, sendClientMessage } from "../services/api";
 
@@ -159,11 +159,10 @@ export default function ClientDashboard() {
             />
             <Stat
               icon={FileText}
-              value={unread}
-              label="Por ler"
+              value={projects.reduce((total, project) => total + (project.documents?.length || 0), 0)}
+              label="Documentos"
               onClick={() => {
-                setMessageFilter("unread");
-                openSection("client-history");
+                openSection("client-projects");
               }}
             />
           </div>
@@ -174,8 +173,12 @@ export default function ClientDashboard() {
               <h2 className="text-base font-bold text-slate-950 sm:text-lg">Meus Projetos</h2>
             </div>
             <div className="mt-4 space-y-3">
-              {projects.map((project) => (
-                <article key={project.id} className="rounded-lg border border-slate-200 bg-white p-3 sm:p-4">
+              {projects.map((project) => {
+                const completedPhases = project.phases?.filter((phase: any) => ["concluida", "concluído", "concluido", "completed"].includes(String(phase.status).toLowerCase())).length || 0;
+                const totalPhases = project.phases?.length || 0;
+                const progress = totalPhases ? Math.round((completedPhases / totalPhases) * 100) : 0;
+                return (
+                <article key={project.id} className="overflow-hidden rounded-lg border border-slate-200 bg-white p-3 sm:p-4">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <h3 className="break-words text-sm font-bold text-slate-950 sm:text-base">{project.title}</h3>
@@ -184,6 +187,13 @@ export default function ClientDashboard() {
                     <span className="w-fit rounded-full bg-yellow-100 px-3 py-1 text-xs font-bold text-yellow-800">{project.status}</span>
                   </div>
                   {project.description && <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-slate-600 [overflow-wrap:anywhere]">{project.description}</p>}
+                  <div className="mt-4 rounded-lg bg-slate-50 p-3">
+                    <div className="mb-2 flex items-center justify-between text-xs font-semibold text-slate-600">
+                      <span>Progresso da obra</span><span>{progress}%</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-yellow-400 transition-all" style={{ width: `${progress}%` }} /></div>
+                    <p className="mt-2 text-xs text-slate-500">{totalPhases ? `${completedPhases} de ${totalPhases} fases concluídas` : "Cronograma em atualização pela equipa."}</p>
+                  </div>
                   {project.phases?.length > 0 && (
                     <ol className="mt-4 space-y-2 text-sm">
                       {project.phases.map((phase: any) => (
@@ -194,8 +204,27 @@ export default function ClientDashboard() {
                       ))}
                     </ol>
                   )}
+                  <div className="mt-4 grid gap-4 border-t border-slate-100 pt-4 lg:grid-cols-2">
+                    <div>
+                      <div className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-900"><FolderOpen className="h-4 w-4 text-yellow-700" />Documentos</div>
+                      {project.documents?.length ? <ul className="space-y-2">{project.documents.map((document: any) => (
+                        <li key={document.id} className="flex items-center justify-between gap-2 rounded-md bg-slate-50 px-3 py-2 text-sm">
+                          <span className="min-w-0 truncate text-slate-700">{document.title || document.file_name}</span>
+                          <a className="shrink-0 text-yellow-700 hover:text-yellow-800" href={resolveAssetUrl(document.file_url)} target="_blank" rel="noreferrer" aria-label={`Descarregar ${document.title || document.file_name}`}><Download className="h-4 w-4" /></a>
+                        </li>
+                      ))}</ul> : <p className="text-xs text-slate-500">Ainda não há documentos publicados.</p>}
+                    </div>
+                    <div>
+                      <div className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-900"><ImageIcon className="h-4 w-4 text-yellow-700" />Registo fotográfico</div>
+                      {project.images?.length ? <div className="grid grid-cols-3 gap-2">{project.images.slice(0, 3).map((image: any) => (
+                        <a key={image.id} href={resolveAssetUrl(image.image_url)} target="_blank" rel="noreferrer" className="block aspect-square overflow-hidden rounded-md bg-slate-100">
+                          <img src={resolveAssetUrl(image.image_url)} alt={image.caption || `Obra ${project.title}`} className="h-full w-full object-cover" />
+                        </a>
+                      ))}</div> : <p className="text-xs text-slate-500">A equipa ainda não publicou fotografias desta obra.</p>}
+                    </div>
+                  </div>
                 </article>
-              ))}
+              )})}
               {!projects.length && <p className="text-sm text-slate-500">Ainda nao ha projetos associados a sua conta.</p>}
             </div>
           </section>

@@ -3,15 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckCircle } from 'lucide-react';
 import { services, contactInfo } from '../data/mockData';
 import { getPublicPortfolio, PortfolioItem, resolveAssetUrl } from '../services/api';
-
-const heroImages = [
-  '/home-slides/luanda-01.jpg',
-  '/home-slides/luanda-02.jpg',
-  '/home-slides/luanda-03.jpg',
-  '/home-slides/luanda-04.jpg',
-  '/home-slides/luanda-05.jpg',
-  '/home-slides/luanda-06.jpg',
-];
+import { realProjectMedia } from '../data/realProjectMedia';
 
 // ============================================
 // HOME PAGE - Página Principal
@@ -19,16 +11,7 @@ const heroImages = [
 // ============================================
 
 export default function Home() {
-  const [activeHeroImage, setActiveHeroImage] = useState(0);
   const [featuredProjects, setFeaturedProjects] = useState<PortfolioItem[]>([]);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActiveHeroImage((current) => (current + 1) % heroImages.length);
-    }, 5000);
-
-    return () => window.clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -56,18 +39,13 @@ export default function Home() {
           ============================================ */}
       <section className="relative flex min-h-[calc(100vh-4rem)] items-center py-16 sm:min-h-[calc(100vh-5rem)] lg:min-h-[90vh]">
         {/* Background Slideshow */}
-        <div className="absolute inset-0 overflow-hidden">
-          {heroImages.map((image, index) => (
-            <img
-              key={image}
-              src={image}
-              alt=""
-              aria-hidden="true"
-              className={`absolute inset-0 h-full w-full scale-[1.01] object-cover blur-[1px] transition-opacity duration-1000 ease-in-out ${
-                index === activeHeroImage ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-          ))}
+        <div className="absolute inset-0 overflow-hidden bg-slate-900">
+          <img
+            src={realProjectMedia.hero}
+            alt="Equipa Dois Lados numa obra"
+            className="h-full w-full object-cover"
+            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+          />
           {/* Overlay Gradiente */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60" />
         </div>
@@ -216,7 +194,7 @@ export default function Home() {
               >
                 {/* Image */}
                 <img
-                  src={resolveAssetUrl(project.image_url, 'https://via.placeholder.com/900x600?text=Projeto')}
+                  src={resolveAssetUrl(project.image_url)}
                   alt={project.title}
                   className="h-72 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
@@ -309,9 +287,10 @@ export default function Home() {
             {/* Image */}
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80"
+                src={realProjectMedia.team}
                 alt="Equipa Dois Lados em ação"
                 className="rounded-2xl shadow-2xl"
+                onError={(event) => { event.currentTarget.style.display = 'none'; }}
               />
               {/* Floating Card */}
               <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-6 hidden md:block">
