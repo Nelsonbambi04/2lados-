@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, MapPin, Calendar, ExternalLink } from "lucide-react";
 import LoadingLogo from "../components/LoadingLogo";
-import { getPublicPortfolio, PortfolioItem, resolveAssetUrl } from "../services/api";
+import MediaImage from "../components/MediaImage";
+import { getPublicPortfolio, Pagination, PortfolioItem, resolveAssetUrl } from "../services/api";
 
 type Category = "todos" | "residencial" | "comercial" | "urbanismo";
 
@@ -16,34 +17,49 @@ export default function Portfolio() {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category>("todos");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeCategory, debouncedSearch]);
+
+  useEffect(() => {
+    let isCurrent = true;
     (async () => {
       try {
-        const res = await getPublicPortfolio();
-        setItems(res.portfolio);
+        if (page === 1) setLoading(true);
+        else setLoadingMore(true);
+        const res = await getPublicPortfolio({
+          page,
+          perPage: 12,
+          category: activeCategory === "todos" ? undefined : activeCategory,
+          search: debouncedSearch || undefined,
+        });
+        if (!isCurrent) return;
+        setItems((current) => page === 1 ? res.portfolio : [...current, ...res.portfolio]);
+        setPagination(res.pagination);
+        setError("");
       } catch (err: any) {
-        setError(err.message);
+        if (isCurrent) setError(err.message);
       } finally {
-        setLoading(false);
+        if (isCurrent) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
       }
     })();
-  }, []);
-
-  const filteredProjects = useMemo(() => {
-    return items.filter((project) => {
-      const matchesCategory =
-        activeCategory === "todos" || project.category === activeCategory;
-      const q = searchQuery.toLowerCase();
-      const matchesSearch =
-        project.title.toLowerCase().includes(q) ||
-        (project.location || "").toLowerCase().includes(q) ||
-        (project.description || "").toLowerCase().includes(q);
-      return matchesCategory && matchesSearch;
-    });
-  }, [items, activeCategory, searchQuery]);
+    return () => { isCurrent = false; };
+  }, [activeCategory, debouncedSearch, page]);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -91,9 +107,7 @@ export default function Portfolio() {
           </div>
         </div>
         <div className="container mx-auto px-4 mt-2 text-sm text-slate-500">
-          {filteredProjects.length} projeto
-          {filteredProjects.length !== 1 ? "s" : ""} encontrado
-          {filteredProjects.length !== 1 ? "s" : ""}
+          {pagination?.total ?? 0} projeto{(pagination?.total ?? 0) !== 1 ? "s" : ""} encontrado{(pagination?.total ?? 0) !== 1 ? "s" : ""}
         </div>
       </section>
 
@@ -103,16 +117,16 @@ export default function Portfolio() {
             <LoadingLogo label="A carregar portfólio..." />
           ) : error ? (
             <div className="text-center text-red-600">{error}</div>
-          ) : filteredProjects.length ? (
+          ) : items.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProjects.map((project) => (
+              {items.map((project) => (
                 <article
                   key={project.id}
                   className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition"
                 >
                   <div className="relative">
                     {project.image_url ? (
-                      <img src={resolveAssetUrl(project.image_url)} alt={project.title} className="h-56 w-full bg-slate-100 object-cover" />
+                      <MediaImage src={resolveAssetUrl(project.image_url)} alt={project.title} className="h-56 w-full bg-slate-100 object-cover" fallbackLabel="Imagem do projeto indisponível" />
                     ) : (
                       <div className="flex h-56 items-center justify-center bg-slate-100 text-sm text-slate-500">Fotografia em preparação</div>
                     )}
@@ -148,6 +162,13 @@ export default function Portfolio() {
             </div>
           ) : (
             <div className="text-center text-slate-500">Nenhum projeto.</div>
+          )}
+          {!loading && pagination?.has_next && (
+            <div className="mt-10 text-center">
+              <button onClick={() => setPage((current) => current + 1)} disabled={loadingMore} className="rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">
+                {loadingMore ? "A carregar..." : "Carregar mais projetos"}
+              </button>
+            </div>
           )}
         </div>
       </section>

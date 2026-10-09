@@ -55,6 +55,7 @@ ESTRUTURA DAS ROTAS:
 """
 
 from flask import Blueprint, request, jsonify, current_app
+from sqlalchemy import or_
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 from models import db, User, Project, ProjectPhase, ProjectImage, ProjectDocument, Quote, Message as ContactMessage, PortfolioItem, Publication, Newsletter
@@ -73,9 +74,43 @@ api = Blueprint('api', __name__, url_prefix='/api')
 PUBLICATION_CATEGORIES = {'noticia', 'atividade', 'evento', 'publicidade', 'obra', 'recrutamento'}
 MESSAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'dwg', 'txt'}
 APPLICATION_UPLOAD_EXTENSIONS = {'pdf', 'doc', 'docx'}
-IMAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+IMAGE_UPLOAD_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'avif'}
 PROJECT_DOCUMENT_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx', 'dwg', 'dxf', 'png', 'jpg', 'jpeg', 'webp', 'txt'}
 PROJECT_DOCUMENT_TYPES = {'planta', 'proposta', 'fatura', 'orcamento', 'contrato', 'relatorio', 'outro'}
+
+
+def validate_image_upload(file_storage):
+    """Reject files that only pretend to be images, without changing valid media."""
+    header = file_storage.stream.read(32)
+    file_storage.stream.seek(0)
+    is_jpeg = header.startswith(b'\xff\xd8\xff')
+    is_png = header.startswith(b'\x89PNG\r\n\x1a\n')
+    is_gif = header.startswith((b'GIF87a', b'GIF89a'))
+    is_webp = header[:4] == b'RIFF' and header[8:12] == b'WEBP'
+    is_avif = header[4:8] == b'ftyp' and (b'avif' in header[8:32] or b'avis' in header[8:32])
+    if not any((is_jpeg, is_png, is_gif, is_webp, is_avif)):
+        raise ValueError('O ficheiro enviado não é uma imagem válida')
+
+
+def get_pagination_params(default_per_page=12, maximum_per_page=48):
+    """Parseia paginação sem permitir listas públicas ilimitadas."""
+    try:
+        page = max(int(request.args.get('page', 1)), 1)
+        per_page = min(max(int(request.args.get('per_page', default_per_page)), 1), maximum_per_page)
+    except (TypeError, ValueError):
+        return None, None
+    return page, per_page
+
+
+def pagination_metadata(page_obj):
+    return {
+        'page': page_obj.page,
+        'per_page': page_obj.per_page,
+        'total': page_obj.total,
+        'pages': page_obj.pages,
+        'has_next': page_obj.has_next,
+        'has_prev': page_obj.has_prev,
+    }
 
 
 def send_mail_async(app, mail, msg):
@@ -181,6 +216,7 @@ def save_publication_image(file_storage):
     extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
     if extension not in IMAGE_UPLOAD_EXTENSIONS:
         raise ValueError('Tipo de imagem nao permitido')
+    validate_image_upload(file_storage)
 
     upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'publications')
     os.makedirs(upload_dir, exist_ok=True)
@@ -198,6 +234,8 @@ def save_project_upload(file_storage, folder, allowed_extensions):
     extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
     if extension not in allowed_extensions:
         raise ValueError('Tipo de ficheiro nao permitido')
+    if allowed_extensions == IMAGE_UPLOAD_EXTENSIONS:
+        validate_image_upload(file_storage)
 
     upload_dir = os.path.join(current_app.root_path, 'static', 'uploads', 'projects', folder)
     os.makedirs(upload_dir, exist_ok=True)
@@ -2241,13 +2279,24 @@ def get_portfolio_public():
     """
     try:
         category = request.args.get('category')
+        search = (request.args.get('q') or '').strip()
+        page, per_page = get_pagination_params()
+        if not page:
+            return jsonify({'success': False, 'error': 'Parametros de paginação invalidos'}), 400
         
         query = PortfolioItem.query.filter_by(is_active=True)
         
         if category:
             query = query.filter_by(category=category)
-        
-        items = query.order_by(PortfolioItem.created_at.desc()).all()
+        if search:
+            term = f'%{search}%'
+            query = query.filter(or_(
+                PortfolioItem.title.ilike(term),
+                PortfolioItem.description.ilike(term),
+                PortfolioItem.location.ilike(term),
+            ))
+
+        items = query.order_by(PortfolioItem.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
         
         return jsonify({
             'success': True,
@@ -2260,7 +2309,8 @@ def get_portfolio_public():
                 'location': p.location,
                 'area_sqm': float(p.area_sqm) if p.area_sqm else None,
                 'year': p.year
-            } for p in items]
+            } for p in items.items],
+            'pagination': pagination_metadata(items)
         }), 200
         
     except Exception as e:
@@ -2276,18 +2326,31 @@ def get_publications_public():
     """Listar publicacoes publicas"""
     try:
         category = request.args.get('category')
+        search = (request.args.get('q') or '').strip()
+        page, per_page = get_pagination_params()
+        if not page:
+            return jsonify({'success': False, 'error': 'Parametros de paginação invalidos'}), 400
         query = Publication.query.filter_by(is_active=True)
 
         if category:
             if category not in PUBLICATION_CATEGORIES:
                 return jsonify({'success': False, 'error': 'Categoria invalida'}), 400
             query = query.filter_by(category=category)
+        if search:
+            term = f'%{search}%'
+            query = query.filter(or_(
+                Publication.title.ilike(term),
+                Publication.summary.ilike(term),
+                Publication.content.ilike(term),
+                Publication.location.ilike(term),
+            ))
 
-        items = query.order_by(Publication.is_featured.desc(), Publication.created_at.desc()).all()
+        items = query.order_by(Publication.is_featured.desc(), Publication.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
 
         return jsonify({
             'success': True,
-            'publications': [serialize_publication(item) for item in items]
+            'publications': [serialize_publication(item) for item in items.items],
+            'pagination': pagination_metadata(items)
         }), 200
     except Exception as e:
         current_app.logger.error(f'Erro ao listar publicacoes publicas: {str(e)}')

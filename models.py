@@ -75,6 +75,11 @@ class Project(db.Model):
     images = db.relationship('ProjectImage', backref='project', lazy='dynamic', cascade='all, delete-orphan')
     documents = db.relationship('ProjectDocument', backref='project', lazy='dynamic', cascade='all, delete-orphan')
 
+    __table_args__ = (
+        db.Index('ix_projects_client_created', 'client_id', 'created_at'),
+        db.Index('ix_projects_status_created', 'status', 'created_at'),
+    )
+
     def __repr__(self):
         return f'<Project {self.title}>'
 
@@ -114,6 +119,8 @@ class ProjectImage(db.Model):
     is_main = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    __table_args__ = (db.Index('ix_project_images_project_created', 'project_id', 'created_at'),)
+
     def __repr__(self):
         return f'<ProjectImage {self.id}>'
 
@@ -137,6 +144,8 @@ class ProjectDocument(db.Model):
     status = db.Column(db.String(30), default='rascunho', nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (db.Index('ix_project_documents_project_created', 'project_id', 'created_at'),)
 
     def __repr__(self):
         return f'<ProjectDocument {self.title}>'
@@ -190,6 +199,8 @@ class Message(db.Model):
     is_replied = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    __table_args__ = (db.Index('ix_messages_user_created', 'user_id', 'created_at'),)
+
     def __repr__(self):
         return f'<Message {self.id} - {self.subject}>'
 
@@ -214,6 +225,8 @@ class PortfolioItem(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    __table_args__ = (db.Index('ix_portfolio_public_listing', 'is_active', 'category', 'created_at'),)
+
     def __repr__(self):
         return f'<PortfolioItem {self.title}>'
 
@@ -237,6 +250,8 @@ class Publication(db.Model):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (db.Index('ix_publications_public_listing', 'is_active', 'category', 'is_featured', 'created_at'),)
 
     def __repr__(self):
         return f'<Publication {self.title}>'

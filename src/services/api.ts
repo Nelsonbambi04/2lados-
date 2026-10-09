@@ -22,6 +22,20 @@ export interface PortfolioItem {
   is_active?: boolean;
 }
 
+export interface Pagination {
+  page: number;
+  per_page: number;
+  total: number;
+  pages: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
+
+export interface Paginated<T> {
+  pagination: Pagination;
+  [key: string]: T[] | Pagination;
+}
+
 export interface Quote {
   id: number;
   client_name: string;
@@ -177,12 +191,15 @@ export function resolveAssetUrl(url?: string | null, fallback = '') {
   return `${ASSET_BASE}${url.startsWith('/') ? url : `/${url}`}`;
 }
 
-export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestInit = {}, timeoutMs = 30_000): Promise<T> {
   const apiPath = path.startsWith('/') ? path : `/${path}`;
   let res: Response;
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
     res = await fetch(`${API_BASE}${apiPath}`, {
       credentials: 'include',
+      signal: options.signal || controller.signal,
       headers: {
         ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
         ...(options.headers || {}),
@@ -195,12 +212,36 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
           ? JSON.stringify(options.body)
           : undefined,
     });
-  } catch {
+  } catch (error: any) {
+    if (error?.name === 'AbortError') {
+      throw new Error('O servidor demorou demasiado a responder. Tente novamente.');
+    }
     throw new Error('Nao foi possivel ligar ao servidor. Verifique se a API esta online.');
+  } finally {
+    window.clearTimeout(timeout);
   }
   const data = (await res.json().catch(() => ({}))) as any;
   if (!res.ok) throw new Error(data.error || data.message || `Erro ${res.status}`);
   return data as T;
+}
+
+const publicCache = new Map<string, { expiresAt: number; data: unknown }>();
+
+async function requestPublic<T>(path: string, cacheForMs = 90_000): Promise<T> {
+  const cached = publicCache.get(path);
+  if (cached && cached.expiresAt > Date.now()) return cached.data as T;
+  const data = await request<T>(path, {}, 45_000);
+  publicCache.set(path, { data, expiresAt: Date.now() + cacheForMs });
+  return data;
+}
+
+function queryString(params: Record<string, string | number | undefined>) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== '') query.set(key, String(value));
+  });
+  const value = query.toString();
+  return value ? `?${value}` : '';
 }
 
 // Imóveis (exemplo existente)
@@ -212,8 +253,13 @@ export async function getProperties(): Promise<Property[]> {
 export const getAdminPortfolio = () =>
   request<{ portfolio: PortfolioItem[] }>('/admin/portfolio');
 
-export const getPublicPortfolio = () =>
-  request<{ portfolio: PortfolioItem[] }>('/portfolio');
+export const getPublicPortfolio = (params: { page?: number; perPage?: number; category?: string; search?: string } = {}) =>
+  requestPublic<{ portfolio: PortfolioItem[]; pagination: Pagination }>(`/portfolio${queryString({
+    page: params.page,
+    per_page: params.perPage,
+    category: params.category,
+    q: params.search,
+  })}`);
 
 export const createPortfolio = (payload: Partial<PortfolioItem>) =>
   request<{ item: { id: number } }>('/admin/portfolio', { method: 'POST', body: payload as any });
@@ -321,10 +367,13 @@ export const deleteAdminUser = (id: number) =>
   request<{ message: string }>(`/admin/users/${id}`, { method: 'DELETE' });
 
 // Publicacoes
-export const getPublicPublications = (category?: PublicationCategory | '') =>
-  request<{ publications: Publication[] }>(
-    category ? `/publications?category=${encodeURIComponent(category)}` : '/publications'
-  );
+export const getPublicPublications = (params: { page?: number; perPage?: number; category?: PublicationCategory | ''; search?: string } = {}) =>
+  requestPublic<{ publications: Publication[]; pagination: Pagination }>(`/publications${queryString({
+    page: params.page,
+    per_page: params.perPage,
+    category: params.category,
+    q: params.search,
+  })}`);
 
 export const getAdminPublications = () =>
   request<{ publications: Publication[] }>('/admin/publications');

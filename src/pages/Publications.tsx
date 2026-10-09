@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   BriefcaseBusiness,
   CalendarDays,
@@ -10,10 +10,12 @@ import {
   X,
 } from "lucide-react";
 import LoadingLogo from "../components/LoadingLogo";
+import MediaImage from "../components/MediaImage";
 import {
   getPublicPublications,
   Publication,
   PublicationCategory,
+  Pagination,
   resolveAssetUrl,
   submitJobApplication,
 } from "../services/api";
@@ -57,36 +59,50 @@ export default function Publications() {
   const [items, setItems] = useState<Publication[]>([]);
   const [filter, setFilter] = useState<Filter>("todos");
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
   const [selectedJob, setSelectedJob] = useState<Publication | null>(null);
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter, debouncedQuery]);
+
+  useEffect(() => {
+    let isCurrent = true;
     (async () => {
       try {
-        const res = await getPublicPublications();
-        setItems(res.publications);
+        if (page === 1) setLoading(true);
+        else setLoadingMore(true);
+        const res = await getPublicPublications({
+          page,
+          perPage: 12,
+          category: filter === "todos" ? undefined : filter,
+          search: debouncedQuery || undefined,
+        });
+        if (!isCurrent) return;
+        setItems((current) => page === 1 ? res.publications : [...current, ...res.publications]);
+        setPagination(res.pagination);
+        setError("");
       } catch (err: any) {
-        setError(err.message);
+        if (isCurrent) setError(err.message);
       } finally {
-        setLoading(false);
+        if (isCurrent) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
       }
     })();
-  }, []);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return items.filter((item) => {
-      const matchesCategory = filter === "todos" || item.category === filter;
-      const matchesSearch =
-        !q ||
-        item.title.toLowerCase().includes(q) ||
-        (item.summary || "").toLowerCase().includes(q) ||
-        item.content.toLowerCase().includes(q) ||
-        (item.location || "").toLowerCase().includes(q);
-      return matchesCategory && matchesSearch;
-    });
-  }, [items, filter, query]);
+    return () => { isCurrent = false; };
+  }, [filter, debouncedQuery, page]);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -143,15 +159,22 @@ export default function Publications() {
             <LoadingLogo label="A carregar publicações..." />
           ) : error ? (
             <div className="text-center text-red-600">{error}</div>
-          ) : filtered.length === 0 ? (
+          ) : items.length === 0 ? (
             <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-500">
               Nenhuma publicação encontrada.
             </div>
           ) : (
             <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((item) => (
+              {items.map((item) => (
                 <PublicationCard key={item.id} item={item} onApply={setSelectedJob} />
               ))}
+            </div>
+          )}
+          {!loading && pagination?.has_next && (
+            <div className="mt-10 text-center">
+              <button onClick={() => setPage((current) => current + 1)} disabled={loadingMore} className="rounded-xl bg-slate-950 px-6 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">
+                {loadingMore ? "A carregar..." : "Carregar mais publicações"}
+              </button>
             </div>
           )}
         </div>
@@ -172,7 +195,7 @@ function PublicationCard({ item, onApply }: { item: Publication; onApply: (item:
     <article className="grid h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       <div className="aspect-[16/10] bg-slate-900">
         {item.image_url ? (
-          <img src={resolveAssetUrl(item.image_url)} alt={item.title} className="h-full w-full object-contain" />
+          <MediaImage src={resolveAssetUrl(item.image_url)} alt={item.title} className="h-full w-full object-cover" fallbackLabel="Imagem da publicação indisponível" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-yellow-400">
             {isRecruitment ? <BriefcaseBusiness className="h-14 w-14" /> : <Newspaper className="h-14 w-14" />}

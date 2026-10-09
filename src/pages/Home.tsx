@@ -4,6 +4,7 @@ import { ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckC
 import { services, contactInfo } from '../data/mockData';
 import { getPublicPortfolio, PortfolioItem, resolveAssetUrl } from '../services/api';
 import { realProjectMedia } from '../data/realProjectMedia';
+import MediaImage from '../components/MediaImage';
 
 // ============================================
 // HOME PAGE - Página Principal
@@ -18,7 +19,7 @@ export default function Home() {
 
     (async () => {
       try {
-        const res = await getPublicPortfolio();
+        const res = await getPublicPortfolio({ page: 1, perPage: 4 });
         if (!isMounted) return;
         setFeaturedProjects(res.portfolio.filter((project) => project.is_active !== false).slice(0, 4));
       } catch {
@@ -40,11 +41,13 @@ export default function Home() {
       <section className="relative flex min-h-[calc(100vh-4rem)] items-center py-16 sm:min-h-[calc(100vh-5rem)] lg:min-h-[90vh]">
         {/* Background Slideshow */}
         <div className="absolute inset-0 overflow-hidden bg-slate-900">
-          <img
+          <MediaImage
             src={realProjectMedia.hero}
             alt="Equipa Dois Lados numa obra"
+            fallbackSrc="/home-slides/luanda-01.jpg"
+            fallbackLabel="Fotografia de obra em atualização"
             className="h-full w-full object-cover"
-            onError={(event) => { event.currentTarget.style.display = 'none'; }}
+            loading="eager"
           />
           {/* Overlay Gradiente */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60" />
@@ -193,10 +196,11 @@ export default function Home() {
                 className="group relative overflow-hidden rounded-2xl"
               >
                 {/* Image */}
-                <img
+                <MediaImage
                   src={resolveAssetUrl(project.image_url)}
                   alt={project.title}
                   className="h-72 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  fallbackLabel="Imagem do projeto indisponível"
                 />
 
                 {/* Overlay */}
@@ -286,11 +290,12 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Image */}
             <div className="relative">
-              <img
+              <MediaImage
                 src={realProjectMedia.team}
+                fallbackSrc="/home-slides/luanda-02.jpg"
+                fallbackLabel="Fotografia da equipa em atualização"
                 alt="Equipa Dois Lados em ação"
-                className="rounded-2xl shadow-2xl"
-                onError={(event) => { event.currentTarget.style.display = 'none'; }}
+                className="h-full min-h-72 w-full rounded-2xl object-cover shadow-2xl"
               />
               {/* Floating Card */}
               <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-6 hidden md:block">

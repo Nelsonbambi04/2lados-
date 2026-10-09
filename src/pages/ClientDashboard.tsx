@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AlertCircle, Bell, Building2, Download, FileText, FolderOpen, Image as ImageIcon, LogIn, LogOut, Mail, Send, User } from "lucide-react";
 import LoadingLogo from "../components/LoadingLogo";
+import MediaImage from "../components/MediaImage";
 import { ClientProfile, getClientProfile, request, resolveAssetUrl, sendClientMessage } from "../services/api";
 
 export default function ClientDashboard() {
@@ -21,9 +22,11 @@ export default function ClientDashboard() {
 
   async function refresh() {
     try {
-      const profile = await getClientProfile();
+      const [profile, projectRes] = await Promise.all([
+        getClientProfile(),
+        request<{ projects: any[] }>("/client/projects"),
+      ]);
       setData(profile);
-      const projectRes = await request<{ projects: any[] }>("/client/projects");
       setProjects(projectRes.projects);
       setError("");
     } catch (err: any) {
@@ -218,7 +221,7 @@ export default function ClientDashboard() {
                       <div className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-900"><ImageIcon className="h-4 w-4 text-yellow-700" />Registo fotográfico</div>
                       {project.images?.length ? <div className="grid grid-cols-3 gap-2">{project.images.slice(0, 3).map((image: any) => (
                         <a key={image.id} href={resolveAssetUrl(image.image_url)} target="_blank" rel="noreferrer" className="block aspect-square overflow-hidden rounded-md bg-slate-100">
-                          <img src={resolveAssetUrl(image.image_url)} alt={image.caption || `Obra ${project.title}`} className="h-full w-full object-cover" />
+                          <MediaImage src={resolveAssetUrl(image.image_url)} alt={image.caption || `Obra ${project.title}`} className="h-full w-full object-cover" fallbackLabel="Imagem da obra indisponível" />
                         </a>
                       ))}</div> : <p className="text-xs text-slate-500">A equipa ainda não publicou fotografias desta obra.</p>}
                     </div>

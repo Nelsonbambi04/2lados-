@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Building2, HardHat, Sofa, Calculator, CheckCircle, Phone } from 'lucide-react';
 import { services, contactInfo } from '../data/mockData';
 import { realProjectMedia } from '../data/realProjectMedia';
+import MediaImage from '../components/MediaImage';
 
 const servicePhotos = [
   realProjectMedia.services.architectural,
@@ -126,11 +127,12 @@ export default function Services() {
                   {/* Image */}
                   <div className={!isEven ? 'lg:order-1' : ''}>
                     <div className="relative">
-                      <img
+                      <MediaImage
                         src={servicePhotos[index]}
                         alt={service.title}
+                        fallbackSrc={index % 2 === 0 ? '/home-slides/luanda-03.jpg' : '/home-slides/luanda-04.jpg'}
+                        fallbackLabel="Fotografia de serviço em atualização"
                         className="w-full h-80 lg:h-96 object-cover rounded-2xl shadow-2xl"
-                        onError={(event) => { event.currentTarget.style.display = 'none'; }}
                       />
                       {/* Decorative Element */}
                       <div className={`absolute -z-10 hidden h-full w-full rounded-2xl bg-yellow-400/20 sm:block ${

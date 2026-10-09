@@ -3,22 +3,29 @@
 // Escritório de Arquitectura e Construção
 // ============================================
 
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
-import Home from './pages/Home';
-import Services from './pages/Services';
-import Portfolio from './pages/Portfolio';
-import Publications from './pages/Publications';
-import ClientDashboard from './pages/ClientDashboard';
-import AdminPanel from './pages/AdminPanel';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Contacts from './pages/Contacts';
-import PropertyList from './components/PropertyList';
+
+const Home = lazy(() => import('./pages/Home'));
+const Services = lazy(() => import('./pages/Services'));
+const Portfolio = lazy(() => import('./pages/Portfolio'));
+const Publications = lazy(() => import('./pages/Publications'));
+const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
+const AdminPanel = lazy(() => import('./pages/AdminPanel'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Contacts = lazy(() => import('./pages/Contacts'));
+const PropertyList = lazy(() => import('./components/PropertyList'));
+
+function PageLoader() {
+  return <div className="min-h-[40vh] bg-slate-50" aria-busy="true" aria-label="A carregar página" />;
+}
 
 function App() {
   return (
     <BrowserRouter>
+      <Suspense fallback={<PageLoader />}>
       <Routes>
         {/* Layout wrapper para todas as rotas */}
         <Route path="/" element={<Layout />}>
@@ -70,6 +77,7 @@ function App() {
           }
         />
       </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }
