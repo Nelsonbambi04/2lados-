@@ -6,10 +6,27 @@ export type LocalPortfolioProject = {
 
 const root = "/projetos/dois-lados";
 const presentationRoot = "/projetos/vivenda-residencial/otimizadas";
+const pdfRoot = "/projetos/portfolio-real";
 const photo = (file: string, alt: string, caption: string): PortfolioGalleryImage => ({ src: `${root}/${file}`, alt, caption });
 const presentation = (file: string, alt: string, caption: string): PortfolioGalleryImage => ({ src: `${presentationRoot}/${file}`, alt, caption });
+const pdf = (file: string, alt: string, caption: string): PortfolioGalleryImage => ({ src: `${pdfRoot}/${file}`, alt, caption });
 
 export const localPortfolioProjects: LocalPortfolioProject[] = [
+  {
+    id: -11, title: "Design de Interiores Contemporâneo", category: "residencial", location: "Luanda, Angola", year: 2024, is_active: true, isLocalProject: true,
+    description: "Concepção de interiores com ambientes funcionais, acabamentos elegantes e integração entre áreas sociais.", image_url: `${pdfRoot}/pdf-image-07.jpg`,
+    gallery: [pdf("pdf-image-06.jpg", "Cozinha contemporânea", "Cozinha e área social"), pdf("pdf-image-07.jpg", "Sala de estar", "Ambiente social"), pdf("pdf-image-08.jpg", "Sala integrada", "Integração de espaços"), pdf("pdf-image-14.jpg", "Escadaria interior", "Detalhe arquitectónico"), pdf("pdf-image-18.jpg", "Cozinha com madeira", "Acabamentos interiores")],
+  },
+  {
+    id: -10, title: "Empreendimento Arquitectónico", category: "comercial", location: "Luanda, Angola", year: 2024, is_active: true, isLocalProject: true,
+    description: "Estudo arquitectónico com implantação, volumes contemporâneos e soluções para espaços colectivos.", image_url: `${pdfRoot}/pdf-image-25.jpg`,
+    gallery: [pdf("pdf-image-25.jpg", "Implantação do empreendimento", "Estudo de implantação"), pdf("pdf-image-26.jpg", "Vista do empreendimento", "Perspectiva exterior"), pdf("pdf-image-27.jpg", "Espaço interior colectivo", "Ambiente de utilização"), pdf("pdf-image-28.jpg", "Estrutura comercial", "Volume arquitectónico"), pdf("pdf-image-31.jpg", "Vista geral do projecto", "Perspectiva urbana")],
+  },
+  {
+    id: -9, title: "Construção Residencial e Fiscalização", category: "residencial", location: "Luanda, Angola", year: 2024, is_active: true, isLocalProject: true,
+    description: "Acompanhamento técnico de construção residencial, da execução estrutural à entrega dos espaços exteriores.", image_url: `${pdfRoot}/pdf-image-36.jpg`,
+    gallery: [pdf("pdf-image-36.jpg", "Fachada residencial", "Vista exterior"), pdf("pdf-image-37.jpg", "Fachada contemporânea", "Frente da residência"), pdf("pdf-image-38.jpg", "Moradia em obra", "Execução residencial"), pdf("pdf-image-41.jpg", "Estrutura em execução", "Progresso de obra"), pdf("pdf-image-46.jpg", "Fiscalização de laje", "Acompanhamento técnico"), pdf("pdf-image-48.jpg", "Inspecção de alvenaria", "Controlo de qualidade")],
+  },
   {
     id: -8, title: "Vivenda Unifamiliar", category: "residencial", location: "Bairro Belo Horizonte, Luanda", year: 2023, is_active: true, isLocalProject: true,
     description: "Projecto residencial unifamiliar com fachada contemporânea, área de lazer e piscina.", image_url: `${presentationRoot}/image1.jpg`,
