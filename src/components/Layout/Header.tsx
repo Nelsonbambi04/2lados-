@@ -1,8 +1,7 @@
-﻿import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search, Phone, MapPin } from 'lucide-react';
+import { Menu, X, Phone, MapPin } from 'lucide-react';
 import { navLinks, contactInfo } from '../../data/mockData';
-import { useSearch, useSearchBar } from '../../hooks/useSearch';
 import logo from '../../assets/dois-lados-logo.png';
 
 // ============================================
@@ -14,12 +13,7 @@ import logo from '../../assets/dois-lados-logo.png';
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-
-  const { isExpanded, query, setQuery, expand, collapse } = useSearchBar();
-  const searchResults = useSearch(query);
 
   // Efeito: Detectar scroll para mudar estilo do header
   useEffect(() => {
@@ -29,18 +23,6 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Efeito: Fechar pesquisa ao clicar fora
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        collapse();
-        setShowSearchResults(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [collapse]);
 
   // Efeito: Fechar menu mobile ao mudar de pÃ¡gina
   useEffect(() => {
@@ -60,50 +42,41 @@ export default function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  const handleSearchFocus = () => {
-    setShowSearchResults(true);
-  };
-
-  const handleSearchSelect = () => {
-    collapse();
-    setShowSearchResults(false);
-  };
-
   return (
     <>
       {/* Header Principal */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-lg'
-            : 'bg-white/80 backdrop-blur-sm'
+            ? 'border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm'
+            : 'border-b border-slate-100 bg-white/95 backdrop-blur-sm'
         }`}
       >
         {/* NavegaÃ§Ã£o Principal */}
-        <div className="container mx-auto px-3 sm:px-4">
-          <div className="flex h-16 items-center justify-between sm:h-20 xl:h-24">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex h-20 items-center justify-between md:h-24">
             {/* Logo */}
             <Link to="/" className="flex min-w-0 items-center gap-2.5 group">
               <img
                 src={logo}
                 alt="Dois Lados"
-                className="h-9 w-auto flex-shrink-0 object-contain sm:h-12 xl:h-16"
+                className="h-10 w-auto flex-shrink-0 object-contain sm:h-12"
               />
               <div className="min-w-0 leading-none">
-                <span className="block truncate text-base font-bold leading-tight tracking-tight text-slate-900 sm:text-xl xl:text-2xl">Dois Lados</span>
-                <span className="block truncate text-[10px] leading-tight text-slate-500 sm:text-xs xl:text-sm">Arquitetura & Construção</span>
+                <span className="block truncate text-base font-bold leading-tight tracking-tight text-slate-900 sm:text-xl">Dois Lados</span>
+                <span className="block truncate text-[10px] leading-tight text-slate-500 sm:text-xs">Arquitetura & Construção</span>
               </div>
             </Link>
 
             {/* NavegaÃ§Ã£o Desktop */}
-            <nav className="hidden xl:flex items-center gap-8 2xl:gap-10">
+            <nav className="hidden items-center gap-6 min-[900px]:flex lg:gap-8">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
                 return (
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`relative font-medium text-base transition-colors ${
+                    className={`relative py-9 text-[10px] font-extrabold uppercase tracking-[0.15em] transition-colors lg:text-[11px] ${
                       isActive
                         ? 'text-slate-900'
                         : 'text-slate-600 hover:text-slate-900'
@@ -112,7 +85,7 @@ export default function Header() {
                     {link.label}
                     {/* Indicador de pÃ¡gina ativa */}
                     <span
-                      className={`absolute -bottom-1 left-0 w-full h-0.5 bg-yellow-400 transition-transform origin-left ${
+                      className={`absolute bottom-0 left-0 h-0.5 w-full bg-yellow-500 transition-transform origin-left ${
                         isActive ? 'scale-x-100' : 'scale-x-0'
                       } group-hover:scale-x-100`}
                     />
@@ -121,95 +94,14 @@ export default function Header() {
               })}
             </nav>
 
-            {/* AÃ§Ãµes: Pesquisa + CTA */}
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3 lg:gap-4">
-              {/* Barra de Pesquisa */}
-              <div ref={searchRef} className="relative hidden sm:block">
-                <div
-                  className={`flex items-center transition-all duration-300 ${
-                    isExpanded ? 'w-44 md:w-56 xl:w-64' : 'w-10'
-                  }`}
-                >
-                  {isExpanded ? (
-                    <input
-                      type="text"
-                      placeholder="Pesquisar..."
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      onFocus={handleSearchFocus}
-                      className="w-full pl-10 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                      autoFocus
-                    />
-                  ) : (
-                    <button
-                      onClick={expand}
-                      className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                      aria-label="Abrir pesquisa"
-                    >
-                      <Search className="w-5 h-5 text-slate-600" />
-                    </button>
-                  )}
-                  {isExpanded && (
-                    <button
-                      onClick={collapse}
-                      className="absolute left-3 p-1 hover:bg-slate-200 rounded-full transition-colors"
-                      aria-label="Fechar pesquisa"
-                    >
-                      <Search className="w-4 h-4 text-slate-400" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Dropdown de Resultados */}
-                {showSearchResults && searchResults.length > 0 && (
-                  <div className="absolute top-full right-0 mt-2 w-[calc(100vw-2rem)] max-w-80 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden">
-                    <div className="p-3 border-b border-slate-100">
-                      <span className="text-xs font-medium text-slate-500">
-                        {searchResults.length} resultado{searchResults.length > 1 ? 's' : ''} encontrado{searchResults.length > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    <div className="max-h-80 overflow-y-auto">
-                      {searchResults.map((result) => (
-                        <Link
-                          key={`${result.type}-${result.id}`}
-                          to={result.path}
-                          onClick={handleSearchSelect}
-                          className="flex items-start gap-3 p-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
-                        >
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                            result.type === 'servico' ? 'bg-yellow-100 text-yellow-600' :
-                            result.type === 'projeto' ? 'bg-blue-100 text-blue-600' :
-                            'bg-slate-100 text-slate-600'
-                          }`}>
-                            {result.type === 'servico' && <Search className="w-4 h-4" />}
-                            {result.type === 'projeto' && <Search className="w-4 h-4" />}
-                            {result.type === 'pagina' && <Search className="w-4 h-4" />}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-slate-900 text-sm truncate">{result.title}</p>
-                            <p className="text-xs text-slate-500 truncate">{result.description}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Sem resultados */}
-                {showSearchResults && query.length >= 2 && searchResults.length === 0 && (
-                  <div className="absolute top-full right-0 mt-2 w-[calc(100vw-2rem)] max-w-80 bg-white rounded-xl shadow-2xl border border-slate-100 p-6 text-center">
-                    <Search className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                    <p className="text-slate-600 text-sm">Nenhum resultado para "{query}"</p>
-                    <p className="text-slate-400 text-xs mt-1">Tente outro termo de pesquisa</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Menu HambÃºrguer (Mobile) */}
+            <div className="flex items-center gap-3">
+              <Link to="/contactos" className="hidden items-center bg-slate-950 px-6 py-4 text-[11px] font-extrabold uppercase tracking-[0.16em] text-white transition hover:bg-yellow-400 hover:text-slate-950 min-[900px]:inline-flex">
+                Pedir Orçamento
+              </Link>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="xl:hidden p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors min-[900px]:hidden"
                 aria-label={isMobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
                 aria-expanded={isMobileMenuOpen}
                 aria-controls="mobile-menu"
@@ -227,7 +119,7 @@ export default function Header() {
 
       {/* Menu Mobile Overlay */}
       {isMobileMenuOpen && (
-        <div id="mobile-menu" className="fixed inset-0 z-[60] xl:hidden">
+        <div id="mobile-menu" className="fixed inset-0 z-[60] min-[900px]:hidden">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
@@ -283,6 +175,10 @@ export default function Header() {
                 })}
               </div>
 
+              <Link to="/contactos" className="mt-6 flex items-center justify-center bg-slate-950 px-5 py-3 text-xs font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-yellow-400 hover:text-slate-950">
+                Pedir Orçamento
+              </Link>
+
               {/* Contactos */}
               <div className="mt-6 rounded-xl border border-slate-100 bg-slate-50 p-4">
                 <h4 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-900">Contacte-nos</h4>
@@ -307,7 +203,7 @@ export default function Header() {
       )}
 
       {/* Spacer para compensar header fixo */}
-      <div className="h-16 sm:h-20 xl:h-24" />
+      <div className="h-20 md:h-24" />
     </>
   );
 }
