@@ -185,6 +185,7 @@ export default function Home() {
                   src={project.image_url}
                   alt={project.title}
                   className="h-72 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  style={{ objectPosition: project.coverPosition || "center" }}
                   fallbackLabel="Imagem do projeto indisponível"
                 />
 

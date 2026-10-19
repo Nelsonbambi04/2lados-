@@ -101,7 +101,7 @@ export default function Portfolio() {
                 >
                   <div className="relative">
                     {project.image_url ? (
-                      <MediaImage src={"isLocalProject" in project ? project.image_url : resolveAssetUrl(project.image_url)} alt={project.title} className="h-56 w-full bg-slate-100 object-cover" fallbackLabel="Imagem do projeto indisponível" />
+                      <MediaImage src={"isLocalProject" in project ? project.image_url : resolveAssetUrl(project.image_url)} alt={project.title} className="h-56 w-full bg-slate-100 object-cover" style={{ objectPosition: project.coverPosition || "center" }} fallbackLabel="Imagem do projeto indisponível" />
                     ) : (
                       <div className="flex h-56 items-center justify-center bg-slate-100 text-sm text-slate-500">Fotografia em preparação</div>
                     )}
