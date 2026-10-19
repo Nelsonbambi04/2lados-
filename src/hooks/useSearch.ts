@@ -62,7 +62,6 @@ export function useSearch(query: string): SearchResult[] {
       { title: 'Home', path: '/' },
       { title: 'Serviços', path: '/servicos' },
       { title: 'Portfólio', path: '/portfolio' },
-      { title: 'Área do Cliente', path: '/cliente' },
       { title: 'Contactos', path: '/contactos' }
     ];
 

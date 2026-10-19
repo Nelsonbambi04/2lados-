@@ -36,7 +36,7 @@ export default function Login() {
           is_admin: data.user.is_admin,
         }),
       );
-      nav(data.user.is_admin ? "/admin" : "/cliente");
+      nav(data.user.is_admin ? "/admin" : "/");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -114,14 +114,6 @@ export default function Login() {
           </form>
         </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-slate-600">
-            Nao tem conta?{" "}
-            <Link to="/register" className="text-yellow-600 font-semibold hover:text-yellow-700">
-              Criar conta
-            </Link>
-          </p>
-        </div>
       </div>
     </main>
   );

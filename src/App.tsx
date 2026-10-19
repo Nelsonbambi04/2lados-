@@ -11,10 +11,8 @@ const Home = lazy(() => import('./pages/Home'));
 const Services = lazy(() => import('./pages/Services'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
 const Publications = lazy(() => import('./pages/Publications'));
-const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
 const AdminPanel = lazy(() => import('./pages/AdminPanel'));
 const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
 const Contacts = lazy(() => import('./pages/Contacts'));
 const PropertyList = lazy(() => import('./components/PropertyList'));
 
@@ -39,11 +37,7 @@ function App() {
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="publicacoes" element={<Publications />} />
           
-          {/* Área do Cliente (Login + Dashboard) */}
-          <Route path="cliente" element={<ClientDashboard />} />
-          <Route path="cliente/dashboard" element={<ClientDashboard />} />
           <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
           
           {/* Painel Admin (requer sessão admin) */}
           <Route path="admin" element={<AdminPanel />} />

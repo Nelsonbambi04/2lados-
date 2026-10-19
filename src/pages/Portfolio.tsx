@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Search, MapPin, Calendar, ExternalLink } from "lucide-react";
+import { Search, MapPin, Calendar, ArrowUpRight, Images, X } from "lucide-react";
 import LoadingLogo from "../components/LoadingLogo";
 import MediaImage from "../components/MediaImage";
 import { getPublicPortfolio, Pagination, PortfolioItem, resolveAssetUrl } from "../services/api";
+import { LocalPortfolioProject, localPortfolioProjects } from "../data/portfolioProjects";
 
 type Category = "todos" | "residencial" | "comercial" | "urbanismo";
 
@@ -23,6 +24,7 @@ export default function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
+  const [selectedProject, setSelectedProject] = useState<LocalPortfolioProject | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), 300);
@@ -60,6 +62,13 @@ export default function Portfolio() {
     })();
     return () => { isCurrent = false; };
   }, [activeCategory, debouncedSearch, page]);
+
+  const localItems = localPortfolioProjects.filter((project) => {
+    const categoryMatches = activeCategory === "todos" || project.category === activeCategory;
+    const searchable = `${project.title} ${project.description} ${project.location}`.toLowerCase();
+    return categoryMatches && searchable.includes(debouncedSearch.toLowerCase());
+  });
+  const visibleItems = [...localItems, ...items];
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -107,26 +116,26 @@ export default function Portfolio() {
           </div>
         </div>
         <div className="container mx-auto px-4 mt-2 text-sm text-slate-500">
-          {pagination?.total ?? 0} projeto{(pagination?.total ?? 0) !== 1 ? "s" : ""} encontrado{(pagination?.total ?? 0) !== 1 ? "s" : ""}
+          {(pagination?.total ?? 0) + localItems.length} projeto{((pagination?.total ?? 0) + localItems.length) !== 1 ? "s" : ""} encontrado{((pagination?.total ?? 0) + localItems.length) !== 1 ? "s" : ""}
         </div>
       </section>
 
       <section className="py-10">
         <div className="container mx-auto px-4">
-          {loading ? (
+          {loading && visibleItems.length === 0 ? (
             <LoadingLogo label="A carregar portfólio..." />
-          ) : error ? (
-            <div className="text-center text-red-600">{error}</div>
-          ) : items.length ? (
+          ) : visibleItems.length ? (
+            <>
+              {error && <div className="mb-6 rounded-xl border border-yellow-200 bg-yellow-50 px-4 py-3 text-center text-sm text-yellow-900">Alguns projetos não puderam ser atualizados agora. Tente novamente mais tarde.</div>}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {items.map((project) => (
+              {visibleItems.map((project) => (
                 <article
                   key={project.id}
                   className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition"
                 >
                   <div className="relative">
                     {project.image_url ? (
-                      <MediaImage src={resolveAssetUrl(project.image_url)} alt={project.title} className="h-56 w-full bg-slate-100 object-cover" fallbackLabel="Imagem do projeto indisponível" />
+                      <MediaImage src={"isLocalProject" in project ? project.image_url : resolveAssetUrl(project.image_url)} alt={project.title} className="h-56 w-full bg-slate-100 object-cover" fallbackLabel="Imagem do projeto indisponível" />
                     ) : (
                       <div className="flex h-56 items-center justify-center bg-slate-100 text-sm text-slate-500">Fotografia em preparação</div>
                     )}
@@ -153,13 +162,18 @@ export default function Portfolio() {
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-yellow-600 font-semibold">
-                      Ver detalhes <ExternalLink className="w-4 h-4" />
-                    </div>
+                    {"isLocalProject" in project ? (
+                      <button onClick={() => setSelectedProject(project)} className="inline-flex items-center gap-2 text-sm font-semibold text-yellow-700 transition hover:text-yellow-800">
+                        Ver projeto <Images className="w-4 h-4" />
+                      </button>
+                    ) : (
+                      <span className="flex items-center gap-2 text-sm font-semibold text-yellow-600">Ver detalhes <ArrowUpRight className="w-4 h-4" /></span>
+                    )}
                   </div>
                 </article>
               ))}
             </div>
+            </>
           ) : (
             <div className="text-center text-slate-500">Nenhum projeto.</div>
           )}
@@ -172,6 +186,35 @@ export default function Portfolio() {
           )}
         </div>
       </section>
+      {selectedProject && <ProjectGallery project={selectedProject} onClose={() => setSelectedProject(null)} />}
     </main>
+  );
+}
+
+function ProjectGallery({ project, onClose }: { project: LocalPortfolioProject; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[70] overflow-y-auto bg-slate-950/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`Galeria do projeto ${project.title}`}>
+      <div className="mx-auto max-w-6xl rounded-2xl bg-white shadow-2xl">
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 rounded-t-2xl border-b border-slate-100 bg-white p-5">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-yellow-700">Projeto residencial · {project.year}</p>
+            <h2 className="mt-1 text-xl font-bold text-slate-950 sm:text-2xl">{project.title}</h2>
+            <p className="mt-1 text-sm text-slate-600">{project.location}</p>
+          </div>
+          <button onClick={onClose} className="rounded-xl p-2 text-slate-600 transition hover:bg-slate-100" aria-label="Fechar galeria"><X className="h-6 w-6" /></button>
+        </div>
+        <div className="p-5 sm:p-7">
+          <p className="max-w-3xl text-slate-600">{project.description}</p>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            {project.gallery.map((image, index) => (
+              <figure key={image.src} className={index === 0 ? "sm:col-span-2" : ""}>
+                <MediaImage src={image.src} alt={image.alt} className={`w-full rounded-xl bg-slate-100 object-cover ${index === 0 ? "max-h-[560px]" : "aspect-[4/3]"}`} fallbackLabel="Imagem do projeto indisponível" />
+                <figcaption className="mt-2 text-sm text-slate-500">{image.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

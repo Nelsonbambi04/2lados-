@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search, User, Phone, MapPin } from 'lucide-react';
+import { Menu, X, Search, Phone, MapPin } from 'lucide-react';
 import { navLinks, contactInfo } from '../../data/mockData';
 import { useSearch, useSearchBar } from '../../hooks/useSearch';
 import logo from '../../assets/dois-lados-logo.png';
@@ -205,15 +205,6 @@ export default function Header() {
                 )}
               </div>
 
-              {/* BotÃ£o Ãrea do Cliente */}
-              <Link
-                to="/cliente"
-                className="hidden lg:flex items-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold text-base rounded-full transition-all hover:shadow-lg hover:shadow-yellow-400/30"
-              >
-                <User className="w-4 h-4" />
-                Área do Cliente
-              </Link>
-
               {/* Menu HambÃºrguer (Mobile) */}
               <button
                 type="button"
@@ -290,17 +281,6 @@ export default function Header() {
                     </Link>
                   );
                 })}
-              </div>
-
-              {/* BotÃ£o CTA Mobile */}
-              <div className="mt-6 pt-6 border-t border-slate-100">
-                <Link
-                  to="/cliente"
-                  className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold rounded-xl transition-colors"
-                >
-                  <User className="w-5 h-5" />
-                  Área do Cliente
-                </Link>
               </div>
 
               {/* Contactos */}
