@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckCircle, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckCircle, Play } from 'lucide-react';
 import { services, contactInfo } from '../data/mockData';
 import { realProjectMedia } from '../data/realProjectMedia';
 import { localPortfolioProjects } from '../data/portfolioProjects';
@@ -12,11 +13,25 @@ import MediaImage from '../components/MediaImage';
 
 export default function Home() {
   const featuredProjects = localPortfolioProjects;
+  const heroSlides = [
+    { src: "/projetos/vivenda-residencial/otimizadas/image1.jpg", alt: "Fachada de vivenda contemporânea", position: "center 52%" },
+    { src: "/projetos/vivenda-residencial/otimizadas/image15.jpg", alt: "Área de lazer com piscina", position: "center 50%" },
+    { src: "/projetos/portfolio-real/pdf-image-07.jpg", alt: "Interior residencial contemporâneo", position: "center center" },
+    { src: "/projetos/portfolio-real/pdf-image-36.jpg", alt: "Projecto residencial contemporâneo", position: "center 48%" },
+    { src: "/projetos/dois-lados/residencia-em-obra.jpeg", alt: "Residência em execução pela equipa Dois Lados", position: "center 44%" },
+    { src: "/projetos/dois-lados/instalacao-eletrica.jpeg", alt: "Técnico da Dois Lados em instalação eléctrica", position: "center 24%" },
+  ];
+  const [activeSlide, setActiveSlide] = useState(0);
   const videoCovers = [
     "/projetos/dois-lados/fachada-em-execucao.jpeg",
     "/projetos/dois-lados/laje-fiscalizacao.jpeg",
     "/projetos/dois-lados/instalacao-eletrica.jpeg",
   ];
+  useEffect(() => {
+    const timer = window.setInterval(() => setActiveSlide((current) => (current + 1) % heroSlides.length), 6500);
+    return () => window.clearInterval(timer);
+  }, [heroSlides.length]);
+  const changeSlide = (direction: number) => setActiveSlide((current) => (current + direction + heroSlides.length) % heroSlides.length);
 
   return (
     <main className="min-h-screen">
@@ -28,10 +43,12 @@ export default function Home() {
         {/* Background Slideshow */}
         <div className="absolute inset-0 overflow-hidden bg-slate-900">
           <MediaImage
-            src={realProjectMedia.hero}
-            alt="Equipa Dois Lados numa obra"
+            key={heroSlides[activeSlide].src}
+            src={heroSlides[activeSlide].src}
+            alt={heroSlides[activeSlide].alt}
             fallbackLabel="Fotografia de obra em atualização"
-            className="h-full w-full object-cover object-[center_42%]"
+            className="h-full w-full object-cover"
+            style={{ objectPosition: heroSlides[activeSlide].position }}
             loading="eager"
           />
           {/* Overlay Gradiente */}
@@ -62,7 +79,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
+        <div className="absolute bottom-6 right-4 z-20 flex items-center gap-3 sm:bottom-8 sm:right-8 lg:right-12">
+          <button onClick={() => changeSlide(-1)} className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-slate-950/55 text-white backdrop-blur transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-slate-950" aria-label="Imagem anterior"><ArrowLeft className="h-4 w-4" /></button>
+          <div className="flex gap-2" aria-label="Seleccionar imagem da capa">
+            {heroSlides.map((slide, index) => <button key={slide.src} onClick={() => setActiveSlide(index)} aria-label={`Ver imagem ${index + 1}`} className={`h-2 rounded-full transition-all ${activeSlide === index ? "w-7 bg-yellow-400" : "w-2 bg-white/60 hover:bg-white"}`} />)}
+          </div>
+          <button onClick={() => changeSlide(1)} className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-slate-950/55 text-white backdrop-blur transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-slate-950" aria-label="Próxima imagem"><ArrowRight className="h-4 w-4" /></button>
+        </div>
       </section>
 
       {/* ============================================
