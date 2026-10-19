@@ -10,11 +10,7 @@ import Layout from './components/Layout/Layout';
 const Home = lazy(() => import('./pages/Home'));
 const Services = lazy(() => import('./pages/Services'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
-const Publications = lazy(() => import('./pages/Publications'));
-const AdminPanel = lazy(() => import('./pages/AdminPanel'));
-const Login = lazy(() => import('./pages/Login'));
 const Contacts = lazy(() => import('./pages/Contacts'));
-const PropertyList = lazy(() => import('./components/PropertyList'));
 
 function PageLoader() {
   return <div className="min-h-[40vh] bg-slate-50" aria-busy="true" aria-label="A carregar página" />;
@@ -35,15 +31,11 @@ function App() {
           
           {/* Página de Portfólio */}
           <Route path="portfolio" element={<Portfolio />} />
-          <Route path="publicacoes" element={<Publications />} />
           
-          <Route path="login" element={<Login />} />
           
           {/* Painel Admin (requer sessão admin) */}
-          <Route path="admin" element={<AdminPanel />} />
           
           {/* Lista de Imóveis */}
-          <Route path="imoveis" element={<PropertyList />} />
           
           {/* Página de Contactos */}
           <Route path="contactos" element={<Contacts />} />

@@ -1,7 +1,8 @@
-import type { PortfolioItem } from "../services/api";
-
 export type PortfolioGalleryImage = { src: string; alt: string; caption: string };
-export type LocalPortfolioProject = PortfolioItem & { gallery: PortfolioGalleryImage[]; isLocalProject: true };
+export type LocalPortfolioProject = {
+  id: number; title: string; description: string; category: "residencial" | "comercial" | "urbanismo";
+  image_url: string; location: string; year: number; is_active: boolean; gallery: PortfolioGalleryImage[]; isLocalProject: true;
+};
 
 const root = "/projetos/dois-lados";
 const photo = (file: string, alt: string, caption: string): PortfolioGalleryImage => ({ src: `${root}/${file}`, alt, caption });

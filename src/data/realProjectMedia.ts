@@ -1,7 +1,7 @@
 // Fotografias e vídeos reais fornecidos pela Dois Lados.
 const mediaRoot = "/projetos/dois-lados";
 export const realProjectMedia = {
-  hero: `${mediaRoot}/hero-obra.jfif`,
+  hero: `${mediaRoot}/instalacao-eletrica.jpeg`,
   services: {
     architectural: `${mediaRoot}/planeamento.jpeg`,
     supervision: `${mediaRoot}/laje-fiscalizacao.jpeg`,

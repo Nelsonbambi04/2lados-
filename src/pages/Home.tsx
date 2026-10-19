@@ -26,7 +26,7 @@ export default function Home() {
             src={realProjectMedia.hero}
             alt="Equipa Dois Lados numa obra"
             fallbackLabel="Fotografia de obra em atualização"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-[center_42%]"
             loading="eager"
           />
           {/* Overlay Gradiente */}
@@ -230,7 +230,7 @@ export default function Home() {
           <div className="grid gap-6 md:grid-cols-3">
             {realProjectMedia.videos.map((video, index) => (
               <div key={video} className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl">
-                <video className="aspect-[9/16] w-full bg-black object-cover" controls preload="metadata" playsInline aria-label={`Vídeo de progresso de obra ${index + 1}`}>
+                <video className="aspect-[9/16] w-full bg-black object-cover" controls preload="none" playsInline poster="/projetos/dois-lados/fachada-em-execucao.jpeg" aria-label={`Vídeo de progresso de obra ${index + 1}`}>
                   <source src={video} type="video/mp4" />
                   O seu navegador não suporta vídeo HTML5.
                 </video>

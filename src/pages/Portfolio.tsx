@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Search, MapPin, Calendar, ArrowUpRight, Images, X } from "lucide-react";
-import LoadingLogo from "../components/LoadingLogo";
 import MediaImage from "../components/MediaImage";
-import { getPublicPortfolio, Pagination, PortfolioItem, resolveAssetUrl } from "../services/api";
 import { LocalPortfolioProject, localPortfolioProjects } from "../data/portfolioProjects";
 
 type Category = "todos" | "residencial" | "comercial" | "urbanismo";
@@ -13,55 +11,22 @@ const categories: { id: Category; label: string }[] = [
   { id: "comercial", label: "Comercial" },
   { id: "urbanismo", label: "Urbanismo" },
 ];
+const resolveAssetUrl = (url: string) => url;
 
 export default function Portfolio() {
-  const [items, setItems] = useState<PortfolioItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category>("todos");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState("");
   const [selectedProject, setSelectedProject] = useState<LocalPortfolioProject | null>(null);
+  const loading = false;
+  const loadingMore = false;
+  const error = "";
+  const pagination = null;
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearch(searchQuery.trim()), 300);
     return () => window.clearTimeout(timer);
   }, [searchQuery]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [activeCategory, debouncedSearch]);
-
-  useEffect(() => {
-    let isCurrent = true;
-    (async () => {
-      try {
-        if (page === 1) setLoading(true);
-        else setLoadingMore(true);
-        const res = await getPublicPortfolio({
-          page,
-          perPage: 12,
-          category: activeCategory === "todos" ? undefined : activeCategory,
-          search: debouncedSearch || undefined,
-        });
-        if (!isCurrent) return;
-        setItems((current) => page === 1 ? res.portfolio : [...current, ...res.portfolio]);
-        setPagination(res.pagination);
-        setError("");
-      } catch (err: any) {
-        if (isCurrent) setError(err.message);
-      } finally {
-        if (isCurrent) {
-          setLoading(false);
-          setLoadingMore(false);
-        }
-      }
-    })();
-    return () => { isCurrent = false; };
-  }, [activeCategory, debouncedSearch, page]);
 
   const localItems = localPortfolioProjects.filter((project) => {
     const categoryMatches = activeCategory === "todos" || project.category === activeCategory;

@@ -3,7 +3,6 @@ import { MapPin, Phone, Mail, Clock, ArrowRight } from 'lucide-react';
 import { contactInfo, navLinks } from '../../data/mockData';
 import logo from '../../assets/dois-lados-logo.png';
 import { FormEvent, useState } from 'react';
-import { subscribeNewsletter } from '../../services/api';
 
 // ============================================
 // FOOTER COMPONENT - Rodapé do Site
@@ -17,21 +16,12 @@ export default function Footer() {
   const [newsletterError, setNewsletterError] = useState('');
   const [newsletterBusy, setNewsletterBusy] = useState(false);
 
-  async function handleNewsletterSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleNewsletterSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNewsletterStatus('');
     setNewsletterError('');
-    setNewsletterBusy(true);
-
-    try {
-      const res = await subscribeNewsletter(newsletterEmail);
-      setNewsletterStatus(res.message || 'Subscricao efetuada com sucesso.');
-      setNewsletterEmail('');
-    } catch (error: any) {
-      setNewsletterError(error.message || 'Nao foi possivel subscrever.');
-    } finally {
-      setNewsletterBusy(false);
-    }
+    setNewsletterStatus('Para receber novidades, contacte-nos por email.');
+    setNewsletterEmail('');
   }
 
   return (

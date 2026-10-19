@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { contactInfo } from '../data/mockData';
-import { submitContactMessage } from '../services/api';
 
 // ============================================
 // CONTACTOS PAGE - Formulário de Contacto
@@ -111,27 +110,11 @@ export default function Contacts() {
     }
 
     setIsSubmitting(true);
-    setSubmitError('');
-
-    try {
-      await submitContactMessage({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject,
-        content: formData.message,
-      });
-      setIsSubmitted(true);
-
-      setTimeout(() => {
-        setIsSubmitted(false);
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      }, 5000);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Não foi possível enviar a mensagem.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    const subject = encodeURIComponent(`[Site] ${formData.subject}`);
+    const body = encodeURIComponent(`Nome: ${formData.name}\nTelefone: ${formData.phone}\nEmail: ${formData.email}\n\n${formData.message}`);
+    window.location.href = `mailto:${contactInfo.email}?subject=${subject}&body=${body}`;
+    setIsSubmitted(true);
+    setIsSubmitting(false);
   };
 
   // ============================================
