@@ -12,6 +12,11 @@ import MediaImage from '../components/MediaImage';
 
 export default function Home() {
   const featuredProjects = localPortfolioProjects;
+  const videoCovers = [
+    "/projetos/dois-lados/fachada-em-execucao.jpeg",
+    "/projetos/dois-lados/laje-fiscalizacao.jpeg",
+    "/projetos/dois-lados/instalacao-eletrica.jpeg",
+  ];
 
   return (
     <main className="min-h-screen">
@@ -19,7 +24,7 @@ export default function Home() {
           HERO SECTION
           Imagem de fundo + Título impactante + CTA
           ============================================ */}
-      <section className="relative flex min-h-[calc(100vh-4rem)] items-center py-16 sm:min-h-[calc(100vh-5rem)] lg:min-h-[90vh]">
+      <section className="relative flex min-h-[calc(100vh-4rem)] items-center py-16 sm:min-h-[calc(100vh-5rem)] lg:min-h-[calc(100vh-142px)]">
         {/* Background Slideshow */}
         <div className="absolute inset-0 overflow-hidden bg-slate-900">
           <MediaImage
@@ -35,7 +40,7 @@ export default function Home() {
 
         {/* Conteúdo Hero */}
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl border-l-2 border-yellow-400 pl-5 sm:pl-8">
             {/* Badge */}
             <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full bg-yellow-400/20 px-3 py-2 text-sm font-medium text-yellow-400 backdrop-blur-sm sm:mb-6 sm:px-4">
               <Building2 className="w-4 h-4" />
@@ -43,7 +48,7 @@ export default function Home() {
             </div>
 
             {/* Título Principal */}
-            <h1 className="mb-5 text-3xl font-bold leading-tight text-white sm:text-4xl md:mb-6 md:text-5xl lg:text-6xl">
+            <h1 className="mb-5 text-4xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-5xl md:mb-6 md:text-6xl lg:text-7xl">
               Do <span className="text-yellow-400">Traço</span> à <br />
               <span className="text-yellow-400">Obra</span>: Construímos o seu Futuro
             </h1>
@@ -230,7 +235,7 @@ export default function Home() {
           <div className="grid gap-6 md:grid-cols-3">
             {realProjectMedia.videos.map((video, index) => (
               <div key={video} className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl">
-                <video className="aspect-[9/16] w-full bg-black object-cover" controls preload="none" playsInline poster="/projetos/dois-lados/fachada-em-execucao.jpeg" aria-label={`Vídeo de progresso de obra ${index + 1}`}>
+                <video className="aspect-[9/16] w-full bg-black object-cover" controls preload="none" playsInline poster={videoCovers[index]} aria-label={`Vídeo de progresso de obra ${index + 1}`}>
                   <source src={video} type="video/mp4" />
                   O seu navegador não suporta vídeo HTML5.
                 </video>

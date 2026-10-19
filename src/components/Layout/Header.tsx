@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, MapPin } from 'lucide-react';
+import { Menu, X, Phone, MapPin, Mail, Clock3 } from 'lucide-react';
 import { navLinks, contactInfo } from '../../data/mockData';
 import logo from '../../assets/dois-lados-logo.png';
 
@@ -44,23 +44,33 @@ export default function Header() {
 
   return (
     <>
-      {/* Header Principal */}
+      {/* Cabeçalho institucional */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm'
-            : 'border-b border-slate-100 bg-white/95 backdrop-blur-sm'
+            ? 'border-b border-slate-200 bg-white/95 shadow-md backdrop-blur-md'
+            : 'border-b border-slate-200 bg-white'
         }`}
       >
-        {/* NavegaÃ§Ã£o Principal */}
+        <div className="hidden border-b border-slate-200 bg-slate-50 lg:block">
+          <div className="container mx-auto flex h-10 max-w-7xl items-center justify-between px-6 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+            <div className="flex h-full items-center">
+              <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="flex h-full items-center gap-2 border-x border-slate-200 px-5 hover:text-yellow-700"><Phone className="h-3.5 w-3.5 text-yellow-600" />{contactInfo.phone}</a>
+              <a href={`mailto:${contactInfo.email}`} className="flex h-full items-center gap-2 border-r border-slate-200 px-5 hover:text-yellow-700"><Mail className="h-3.5 w-3.5 text-yellow-600" />{contactInfo.email}</a>
+              <span className="flex h-full items-center gap-2 border-r border-slate-200 px-5"><Clock3 className="h-3.5 w-3.5 text-yellow-600" />Seg - Sex: 08h00 - 17h00</span>
+            </div>
+            <span className="text-[10px] font-extrabold tracking-[0.2em] text-yellow-700">ARQUITECTURA, ENGENHARIA E CONSTRUÇÃO</span>
+          </div>
+        </div>
+        {/* Navegação Principal */}
         <div className="container mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex h-20 items-center justify-between md:h-24">
+          <div className="flex h-20 items-center justify-between lg:h-[102px]">
             {/* Logo */}
             <Link to="/" className="flex min-w-0 items-center gap-2.5 group">
               <img
                 src={logo}
                 alt="Dois Lados"
-                className="h-10 w-auto flex-shrink-0 object-contain sm:h-12"
+                className="h-12 w-auto flex-shrink-0 object-contain sm:h-14"
               />
               <div className="min-w-0 leading-none">
                 <span className="block truncate text-base font-bold leading-tight tracking-tight text-slate-900 sm:text-xl">Dois Lados</span>
@@ -203,7 +213,7 @@ export default function Header() {
       )}
 
       {/* Spacer para compensar header fixo */}
-      <div className="h-20 md:h-24" />
+      <div className="h-20 lg:h-[142px]" />
     </>
   );
 }
