@@ -88,6 +88,25 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="bg-white py-14 sm:py-18 lg:py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl bg-slate-950 shadow-2xl">
+            <div className="grid lg:grid-cols-[0.9fr_1.4fr]">
+              <div className="flex flex-col justify-center p-7 sm:p-10">
+                <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1.5 text-xs font-bold tracking-wide text-yellow-300"><Play className="h-3.5 w-3.5" /> VÍDEO INSTITUCIONAL</span>
+                <h2 className="text-3xl font-bold text-white sm:text-4xl">Conheça a Dois Lados</h2>
+                <p className="mt-4 leading-relaxed text-slate-300">Veja como transformamos ideias em espaços construídos com rigor, acompanhamento e qualidade.</p>
+                <Link to="/contactos" className="mt-7 inline-flex w-fit items-center gap-2 font-bold text-yellow-400 transition hover:text-yellow-300">Falar sobre o seu projecto <ArrowRight className="h-4 w-4" /></Link>
+              </div>
+              <video className="aspect-video h-full w-full bg-black object-cover" controls preload="none" playsInline poster="/projetos/portfolio-real/pdf-image-36.jpg" aria-label="Vídeo comercial da Dois Lados">
+                <source src="/videos/dois-lados-comercial.mov" type="video/quicktime" />
+                O seu navegador não suporta vídeo HTML5.
+              </video>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============================================
           STATS SECTION
           Números que transmitem credibilidade

@@ -225,6 +225,9 @@ export default function Footer() {
                 Termos e Condições
               </Link>
             </div>
+            <a href="https://www.instagram.com/vukamba.ao?obrf=bXJhczVwcW01M3ln" target="_blank" rel="noopener noreferrer" className="text-center font-semibold text-slate-400 transition hover:text-yellow-400 md:text-right">
+              Desenvolvido por <span className="text-yellow-400">VUKAMBA</span>
+            </a>
           </div>
         </div>
       </div>
