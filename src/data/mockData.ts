@@ -105,72 +105,72 @@ export const projects: Project[] = [
     id: 'residência-t3-mirante',
     title: 'Residência T3 Mirante',
     category: 'residencial',
-    image: '/projetos/obra-estrutura.jpg',
+    image: '/projetos/dois-lados/fachada-em-execucao.jpeg',
     location: 'Luanda, Maianga',
     year: 2024,
     description: 'Moradia unifamiliar T3 com áreas sociais amplas, piscina e jardim paisagístico. Design contemporâneo com materiais locais.',
     images: [
-      '/projetos/obra-estrutura.jpg'
+      '/projetos/dois-lados/fachada-em-execucao.jpeg'
     ]
   },
   {
     id: 'edificio-comercial-11-setembro',
     title: 'Edifício Comercial 11 de Setembro',
     category: 'comercial',
-    image: '/projetos/fiscalizacao-em-obra.jpg',
+    image: '/projetos/dois-lados/laje-fiscalizacao.jpeg',
     location: 'Luanda, Centro',
     year: 2023,
     description: 'Edifício de 8 andares com espaços comerciais no rés-do-chão e escritórios nas plantas superiores. Fachada em vidro e betão.',
     images: [
-      '/projetos/fiscalizacao-em-obra.jpg'
+      '/projetos/dois-lados/laje-fiscalizacao.jpeg'
     ]
   },
   {
     id: 'urbanismo-cacuaco',
     title: 'Projeto Urbano Cacuaco',
     category: 'urbanismo',
-    image: '/projetos/visita-tecnica.jpg',
+    image: '/projetos/dois-lados/visita-tecnica.jpeg',
     location: 'Cacuaco, Luanda',
     year: 2023,
     description: 'Projeto de urbanização para 150 lotes com zonas verdes, equipamentos sociais e infraestrutura moderna.',
     images: [
-      '/projetos/visita-tecnica.jpg'
+      '/projetos/dois-lados/visita-tecnica.jpeg'
     ]
   },
   {
     id: 'apartamento-t5-talatona',
     title: 'Apartamento T5 Talatona',
     category: 'residencial',
-    image: '/projetos/acabamentos-interior.jpg',
+    image: '/projetos/dois-lados/caixilharia.jpeg',
     location: 'Talatona, Luanda',
     year: 2024,
     description: 'Apartamento de luxo com vista panorâmica, acabamentos premium e integração de tecnologia smart home.',
     images: [
-      '/projetos/acabamentos-interior.jpg'
+      '/projetos/dois-lados/caixilharia.jpeg'
     ]
   },
   {
     id: 'sede-empresa-petroleo',
     title: 'Sede Empresa Petrolífera',
     category: 'comercial',
-    image: '/projetos/equipa-capacetes.jpg',
+    image: '/projetos/dois-lados/equipa-obra.jpeg',
     location: 'Luanda, Ingombota',
     year: 2022,
     description: 'Sede corporativa com 12.000m², espaços colaborativos, auditorium e rooftop garden. Certificação LEED白银.',
     images: [
-      '/projetos/equipa-capacetes.jpg'
+      '/projetos/dois-lados/equipa-obra.jpeg'
     ]
   },
   {
     id: 'centro-comercial-viana',
     title: 'Centro Comercial Viana',
     category: 'urbanismo',
-    image: '/projetos/equipa-em-obra.jpg',
+    image: '/projetos/dois-lados/estrutura.jpeg',
     location: 'Viana, Luanda',
     year: 2024,
     description: 'Complexo comercial com 200 lojas, praça de alimentação, cinema e parque de estacionamento para 500 viaturas.',
     images: [
-      '/projetos/equipa-em-obra.jpg'
+      '/projetos/dois-lados/estrutura.jpeg'
     ]
   }
 ];

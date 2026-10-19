@@ -68,7 +68,8 @@ export default function Portfolio() {
     const searchable = `${project.title} ${project.description} ${project.location}`.toLowerCase();
     return categoryMatches && searchable.includes(debouncedSearch.toLowerCase());
   });
-  const visibleItems = [...localItems, ...items];
+  // O portfólio público apresenta apenas os registos reais validados pela equipa.
+  const visibleItems = localItems;
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -116,7 +117,7 @@ export default function Portfolio() {
           </div>
         </div>
         <div className="container mx-auto px-4 mt-2 text-sm text-slate-500">
-          {(pagination?.total ?? 0) + localItems.length} projeto{((pagination?.total ?? 0) + localItems.length) !== 1 ? "s" : ""} encontrado{((pagination?.total ?? 0) + localItems.length) !== 1 ? "s" : ""}
+          {localItems.length} projeto{localItems.length !== 1 ? "s" : ""} encontrado{localItems.length !== 1 ? "s" : ""}
         </div>
       </section>
 

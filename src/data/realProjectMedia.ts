@@ -1,14 +1,15 @@
-// Fotografias reais da Dois Lados. Coloque os ficheiros recebidos em
-// public/projetos/ com estes nomes. O site nunca usa fotografias de banco.
+// Fotografias e vídeos reais fornecidos pela Dois Lados.
+const mediaRoot = "/projetos/dois-lados";
 export const realProjectMedia = {
-  hero: "/projetos/equipa-em-obra.jpg",
+  hero: `${mediaRoot}/hero-obra.jfif`,
   services: {
-    architectural: "/projetos/obra-estrutura.jpg",
-    supervision: "/projetos/fiscalizacao-em-obra.jpg",
-    interiors: "/projetos/acabamentos-interior.jpg",
-    consulting: "/projetos/visita-tecnica.jpg",
+    architectural: `${mediaRoot}/planeamento.jpeg`,
+    supervision: `${mediaRoot}/laje-fiscalizacao.jpeg`,
+    interiors: `${mediaRoot}/caixilharia.jpeg`,
+    consulting: `${mediaRoot}/visita-tecnica.jpeg`,
   },
-  team: "/projetos/equipa-capacetes.jpg",
+  team: `${mediaRoot}/equipa-obra.jpeg`,
+  videos: [`${mediaRoot}/progresso-obra-01.mp4`, `${mediaRoot}/progresso-obra-02.mp4`, `${mediaRoot}/progresso-obra-03.mp4`],
 } as const;
 
-export const photoSetupNote = "Fotografias reais da equipa e das obras da Dois Lados.";
+export const photoSetupNote = "Fotografias e vídeos reais da equipa e das obras da Dois Lados.";

@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckCircle } from 'lucide-react';
+import { ArrowRight, Building2, HardHat, Sofa, Calculator, MapPin, Phone, CheckCircle, Play } from 'lucide-react';
 import { services, contactInfo } from '../data/mockData';
-import { getPublicPortfolio, PortfolioItem, resolveAssetUrl } from '../services/api';
 import { realProjectMedia } from '../data/realProjectMedia';
+import { localPortfolioProjects } from '../data/portfolioProjects';
 import MediaImage from '../components/MediaImage';
 
 // ============================================
@@ -12,25 +11,7 @@ import MediaImage from '../components/MediaImage';
 // ============================================
 
 export default function Home() {
-  const [featuredProjects, setFeaturedProjects] = useState<PortfolioItem[]>([]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    (async () => {
-      try {
-        const res = await getPublicPortfolio({ page: 1, perPage: 4 });
-        if (!isMounted) return;
-        setFeaturedProjects(res.portfolio.filter((project) => project.is_active !== false).slice(0, 4));
-      } catch {
-        if (isMounted) setFeaturedProjects([]);
-      }
-    })();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const featuredProjects = localPortfolioProjects;
 
   return (
     <main className="min-h-screen">
@@ -44,7 +25,6 @@ export default function Home() {
           <MediaImage
             src={realProjectMedia.hero}
             alt="Equipa Dois Lados numa obra"
-            fallbackSrc="/home-slides/luanda-01.jpg"
             fallbackLabel="Fotografia de obra em atualização"
             className="h-full w-full object-cover"
             loading="eager"
@@ -197,7 +177,7 @@ export default function Home() {
               >
                 {/* Image */}
                 <MediaImage
-                  src={resolveAssetUrl(project.image_url)}
+                  src={project.image_url}
                   alt={project.title}
                   className="h-72 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   fallbackLabel="Imagem do projeto indisponível"
@@ -237,6 +217,27 @@ export default function Home() {
               Ainda não existem projetos publicados.
             </div>
           )}
+        </div>
+      </section>
+
+      <section className="bg-slate-950 py-16 sm:py-20 lg:py-24">
+        <div className="container mx-auto px-4">
+          <div className="mb-10 max-w-2xl sm:mb-12">
+            <span className="inline-flex items-center gap-2 rounded-full bg-yellow-400/15 px-4 py-1.5 text-sm font-semibold text-yellow-300"><Play className="h-4 w-4" /> EM OBRA</span>
+            <h2 className="mt-4 text-3xl font-bold text-white md:text-4xl">Veja o nosso trabalho no terreno</h2>
+            <p className="mt-3 text-slate-300">Registos reais que mostram o rigor da execução e o acompanhamento da equipa.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {realProjectMedia.videos.map((video, index) => (
+              <div key={video} className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl">
+                <video className="aspect-[9/16] w-full bg-black object-cover" controls preload="metadata" playsInline aria-label={`Vídeo de progresso de obra ${index + 1}`}>
+                  <source src={video} type="video/mp4" />
+                  O seu navegador não suporta vídeo HTML5.
+                </video>
+                <p className="px-4 py-3 text-sm font-medium text-slate-200">Progresso de obra {index + 1}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -292,7 +293,6 @@ export default function Home() {
             <div className="relative">
               <MediaImage
                 src={realProjectMedia.team}
-                fallbackSrc="/home-slides/luanda-02.jpg"
                 fallbackLabel="Fotografia da equipa em atualização"
                 alt="Equipa Dois Lados em ação"
                 className="h-full min-h-72 w-full rounded-2xl object-cover shadow-2xl"

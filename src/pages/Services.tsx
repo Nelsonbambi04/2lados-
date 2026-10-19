@@ -130,7 +130,6 @@ export default function Services() {
                       <MediaImage
                         src={servicePhotos[index]}
                         alt={service.title}
-                        fallbackSrc={index % 2 === 0 ? '/home-slides/luanda-03.jpg' : '/home-slides/luanda-04.jpg'}
                         fallbackLabel="Fotografia de serviço em atualização"
                         className="w-full h-80 lg:h-96 object-cover rounded-2xl shadow-2xl"
                       />
