@@ -3,7 +3,7 @@ const mediaRoot = "/projetos/dois-lados";
 export const realProjectMedia = {
   hero: `${mediaRoot}/instalacao-eletrica.jpeg`,
   services: {
-    architectural: `${mediaRoot}/planeamento.jpeg`,
+    architectural: "/projetos/portfolio-real/pdf-image-36.jpg",
     supervision: `${mediaRoot}/laje-fiscalizacao.jpeg`,
     interiors: `${mediaRoot}/caixilharia.jpeg`,
     consulting: `${mediaRoot}/visita-tecnica.jpeg`,

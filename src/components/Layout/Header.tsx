@@ -105,7 +105,7 @@ export default function Header() {
             </nav>
 
             <div className="flex items-center gap-3">
-              <Link to="/contactos" className="hidden items-center bg-slate-950 px-6 py-4 text-[11px] font-extrabold uppercase tracking-[0.16em] text-white transition hover:bg-yellow-400 hover:text-slate-950 min-[900px]:inline-flex">
+              <Link to="/contactos" className="hidden items-center bg-yellow-400 px-6 py-4 text-[11px] font-extrabold uppercase tracking-[0.16em] text-slate-950 shadow-sm transition hover:bg-yellow-500 min-[900px]:inline-flex">
                 Pedir Orçamento
               </Link>
               <button
@@ -185,7 +185,7 @@ export default function Header() {
                 })}
               </div>
 
-              <Link to="/contactos" className="mt-6 flex items-center justify-center bg-slate-950 px-5 py-3 text-xs font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-yellow-400 hover:text-slate-950">
+              <Link to="/contactos" className="mt-6 flex items-center justify-center bg-yellow-400 px-5 py-3 text-xs font-extrabold uppercase tracking-[0.14em] text-slate-950 transition hover:bg-yellow-500">
                 Pedir Orçamento
               </Link>
 

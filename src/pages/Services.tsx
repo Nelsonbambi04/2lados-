@@ -131,7 +131,7 @@ export default function Services() {
                         src={servicePhotos[index]}
                         alt={service.title}
                         fallbackLabel="Fotografia de serviço em atualização"
-                        className="w-full h-80 lg:h-96 object-cover rounded-2xl shadow-2xl"
+                        className="h-80 w-full rounded-2xl object-cover object-center shadow-2xl lg:h-96"
                       />
                       {/* Decorative Element */}
                       <div className={`absolute -z-10 hidden h-full w-full rounded-2xl bg-yellow-400/20 sm:block ${
