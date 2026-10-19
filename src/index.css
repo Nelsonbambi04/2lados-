@@ -7,10 +7,11 @@
   --color-yellow-100: #f9ecd0;
   --color-yellow-200: #f1d49a;
   --color-yellow-300: #e7ba63;
-  --color-yellow-400: #db9b2d;
-  --color-yellow-500: #c8871f;
-  --color-yellow-600: #a96d19;
-  --color-yellow-700: #875219;
+  /* Dourado extraído do símbolo Dois Lados. */
+  --color-yellow-400: #d9a42b;
+  --color-yellow-500: #c58b18;
+  --color-yellow-600: #a97012;
+  --color-yellow-700: #80500f;
   --color-yellow-800: #70431b;
   --color-yellow-900: #60391a;
   --color-yellow-950: #371d0b;
@@ -18,10 +19,10 @@
   --color-amber-100: #f9ecd0;
   --color-amber-200: #f1d49a;
   --color-amber-300: #e7ba63;
-  --color-amber-400: #db9b2d;
-  --color-amber-500: #c8871f;
-  --color-amber-600: #a96d19;
-  --color-amber-700: #875219;
+  --color-amber-400: #d9a42b;
+  --color-amber-500: #c58b18;
+  --color-amber-600: #a97012;
+  --color-amber-700: #80500f;
   --color-amber-800: #70431b;
   --color-amber-900: #60391a;
   --color-amber-950: #371d0b;

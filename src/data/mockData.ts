@@ -231,6 +231,5 @@ export const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Serviços', path: '/servicos' },
   { label: 'Portfólio', path: '/portfolio' },
-  { label: 'Publicações', path: '/publicacoes' },
   { label: 'Contactos', path: '/contactos' }
 ];
